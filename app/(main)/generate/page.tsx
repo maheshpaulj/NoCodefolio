@@ -11,9 +11,10 @@ export default function GeneratePage() {
   const [portfolioData, setPortfolioData] = useState<PortfolioData>({
     name: "",
     bio: "",
-    projects: "",
-    experience: "",
-    skills: "",
+    projects: [],
+    experience: [],
+    skills: [],
+    contact: { email: "" },
     template: "modern",
   });
 
@@ -24,18 +25,18 @@ export default function GeneratePage() {
 
   return (
     <div className="p-8 bg-white">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">
-        Create Your Portfolio
-      </h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Create Your Portfolio</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-4">
           <FormSection onChange={setPortfolioData} portfolioData={portfolioData} />
-          <Button
-            onClick={handleViewInNewTab}
-            className="bg-blue-500 text-white hover:bg-blue-600 transition-colors"
-          >
-            View in New Tab
-          </Button>
+          {portfolioData.name && (
+            <Button
+              onClick={handleViewInNewTab}
+              className="bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+            >
+              View in New Tab
+            </Button>
+          )}
         </div>
         <div>
           <LivePreview portfolioData={portfolioData} />
