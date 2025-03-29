@@ -1,70 +1,54 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PortfolioData } from "@/types/portfolio";
 
 interface FormSectionProps {
-  onSubmit: (data: PortfolioData) => void;
+  onChange: (data: PortfolioData) => void;
+  portfolioData: PortfolioData;
 }
 
-export default function FormSection({ onSubmit }: FormSectionProps) {
-  const [formData, setFormData] = useState({
-    name: "",
-    bio: "",
-    projects: "",
-    experience: "",
-    skills: "",
-    template: "modern",
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData as PortfolioData);
+export default function FormSection({ onChange, portfolioData }: FormSectionProps) {
+  const handleChange = (field: keyof PortfolioData, value: string) => {
+    onChange({ ...portfolioData, [field]: value });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="space-y-4">
       <Input
         placeholder="Your Name"
-        value={formData.name}
-        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+        value={portfolioData.name}
+        onChange={(e) => handleChange("name", e.target.value)}
       />
       <Input
         placeholder="Bio"
-        value={formData.bio}
-        onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+        value={portfolioData.bio}
+        onChange={(e) => handleChange("bio", e.target.value)}
       />
       <Input
         placeholder="Projects (comma-separated)"
-        value={formData.projects}
-        onChange={(e) => setFormData({ ...formData, projects: e.target.value })}
+        value={portfolioData.projects}
+        onChange={(e) => handleChange("projects", e.target.value)}
       />
       <Input
         placeholder="Experience"
-        value={formData.experience}
-        onChange={(e) =>
-          setFormData({ ...formData, experience: e.target.value })
-        }
+        value={portfolioData.experience}
+        onChange={(e) => handleChange("experience", e.target.value)}
       />
       <Input
         placeholder="Skills (comma-separated)"
-        value={formData.skills}
-        onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
+        value={portfolioData.skills}
+        onChange={(e) => handleChange("skills", e.target.value)}
       />
       <select
-        value={formData.template}
-        onChange={(e) =>
-          setFormData({ ...formData, template: e.target.value })
-        }
+        value={portfolioData.template}
+        onChange={(e) => handleChange("template", e.target.value)}
         className="w-full p-2 border rounded"
       >
         <option value="modern">Modern</option>
         <option value="minimal">Minimal</option>
         <option value="creative">Creative</option>
       </select>
-      <Button type="submit">Generate Portfolio</Button>
-    </form>
+    </div>
   );
 }

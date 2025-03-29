@@ -23,8 +23,10 @@ export default function GeneratedOutput({ portfolioData }: GeneratedOutputProps)
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold">Your Portfolio is Ready!</h2>
-      <Button onClick={handleDownload}>Download as ZIP</Button>
-      <Button onClick={handleDeploy}>Deploy to Vercel</Button>
+      <div className="flex gap-2">
+        <Button onClick={handleDownload}>Download as ZIP</Button>
+        <Button onClick={handleDeploy}>Deploy to Vercel</Button>
+      </div>
     </div>
   );
 }
