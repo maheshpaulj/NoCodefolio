@@ -1,37 +1,37 @@
-export interface Project {
+export interface WorkExperience {
   title: string;
+  company: string;
+  duration: string;
   description: string;
-  time: string; // e.g., "Jan 2023 - Mar 2023"
-  link?: string;
-  image?: string; // Base64 or URL (for simplicity, we'll assume URL in this example)
-}
-
-export interface Experience {
-  title: string;
-  description: string;
-  time: string;
-  link?: string;
-  image?: string;
 }
 
 export interface Skill {
   name: string;
-  image?: string; // Optional image URL
+  level: string; // e.g., "Experienced", "Intermediate", "Basic"
+  icon?: string; // Optional image URL for skill icon
+}
+
+export interface Project {
+  title: string;
+  image: string;
+  githubLink: string;
+  liveDemoLink: string;
 }
 
 export interface Contact {
   email: string;
-  phone?: string;
-  linkedin?: string;
-  github?: string;
+  linkedin: string;
 }
 
 export interface PortfolioData {
   name: string;
-  bio: string;
-  projects: Project[];
-  experience: Experience[];
+  bio: string; // Supports HTML for styled text
+  profileImage: string; // Profile picture URL
+  resumeLink: string; // URL to resume PDF
+  aboutText: string;
+  workExperience: WorkExperience[];
   skills: Skill[];
+  projects: Project[];
   contact: Contact;
   template: "modern" | "minimal" | "creative";
 }
