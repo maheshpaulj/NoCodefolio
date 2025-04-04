@@ -21,6 +21,8 @@ export interface Project {
 export interface Contact {
   email: string;
   linkedin: string;
+  github: string;
+  phone: string;
 }
 
 export interface PortfolioData {
