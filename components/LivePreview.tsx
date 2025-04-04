@@ -7,7 +7,9 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { ModernTemplate } from "@/lib/templates/modern";
-import { modernTemplate } from "@/lib/templates/modern";
+import { modernTemplate } from "@/lib/templates/modern"; // Add the minimal template
+import { CreativeTemplate } from "@/lib/templates/CreativeTemplate"; // Add the creative template
+import { creativeTemplate } from "@/lib/templates/CreativeTemplate"; // Add the creative template
 
 interface LivePreviewProps {
   portfolioData: PortfolioData;
@@ -60,7 +62,12 @@ export default function LivePreview({ portfolioData, onUpdate }: LivePreviewProp
 
   const downloadPortfolio = async () => {
     const zip = new JSZip();
-    const files: Record<string, string> = data.template === "modern" ? modernTemplate(data) : {};
+    const files: Record<string, string> =
+      data.template === "modern"
+        ? modernTemplate(data)
+        : data.template === "creative"
+        ? creativeTemplate(data)
+        : {};
     Object.entries(files).forEach(([filePath, content]) => {
       zip.file(filePath, content);
     });
@@ -68,9 +75,9 @@ export default function LivePreview({ portfolioData, onUpdate }: LivePreviewProp
     saveAs(zipBlob, `${data.name.toLowerCase().replace(/\s+/g, "-") || "portfolio"}-portfolio.zip`);
   };
 
-  const templateComponents: Record<string, React.ComponentType<any>> = { // eslint-disable-line @typescript-eslint/no-explicit-any
+  const templateComponents: Record<string, React.ComponentType<any>> = {
     modern: ModernTemplate,
-    // Add more templates here as they are implemented
+    creative: CreativeTemplate, // Added creative template
   };
 
   const SelectedTemplate = templateComponents[data.template] || ModernTemplate;

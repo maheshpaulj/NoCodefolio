@@ -6,6 +6,7 @@ import { PortfolioData } from "@/types/portfolio";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
+// Available templates
 const availableTemplates = [
   {
     id: "modern",
@@ -14,10 +15,16 @@ const availableTemplates = [
     previewImage: "/assets/modernTemplate.png",
   },
   {
-    id: "sample",
-    name: "sample",
-    description: "A sleek, animated portfolio with a modern design.",
-    previewImage: "/assets/modernTemplate.png",
+    id: "minimal",
+    name: "Minimal",
+    description: "A clean, minimalist portfolio template.",
+    previewImage: "/assets/minimalTemplate.png",
+  },
+  {
+    id: "creative",
+    name: "Creative",
+    description: "A bold and vibrant creative design portfolio.",
+    previewImage: "/assets/creativeTemplate.png",  // Make sure you add the creative template preview image
   },
   // Add more as needed
 ];
@@ -65,10 +72,12 @@ export default function GeneratePage() {
       github: "https://github.com",
       phone: "+91 1122334455",
     },
-    template: "modern", // Matches updated PortfolioData type
+    template: "modern", // Default template is "modern"
   });
+
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
 
+  // Handle template selection
   const handleTemplateSelect = (templateId: "modern" | "minimal" | "creative") => {
     setPortfolioData((prev) => ({
       ...prev,
@@ -92,10 +101,10 @@ export default function GeneratePage() {
               <motion.div
                 key={template.id}
                 whileHover={{ scale: 1.02 }}
-                className="bg-white rounded-lg shadow-lg overflow-hidden"
+                className="bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer"
                 onClick={() => handleTemplateSelect(template.id as "modern" | "minimal" | "creative")}
               >
-                <img          // eslint-disable-line  @next/next/no-img-element
+                <img
                   src={template.previewImage}
                   alt={`${template.name} Preview`}
                   className="w-full h-56 object-contain"
@@ -104,7 +113,7 @@ export default function GeneratePage() {
                   <h2 className="text-xl font-semibold">{template.name}</h2>
                   <p className="text-gray-600 mt-2">{template.description}</p>
                   <Button
-                    className="mt-4 w-full bg-blue-500 hover:bg-blue-600 cursor-pointer"
+                    className="mt-4 w-full bg-blue-500 hover:bg-blue-600"
                     onClick={() => handleTemplateSelect(template.id as "modern" | "minimal" | "creative")}
                   >
                     Select
