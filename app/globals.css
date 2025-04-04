@@ -120,3 +120,17 @@
     @apply bg-background text-foreground;
   }
 }
+@layer utilities {
+  @keyframes pulse-slow {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 10s ease-in-out infinite;
+  }
+}

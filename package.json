@@ -14,7 +14,8 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "file-saver": "^2.0.5",
-    "framer-motion": "^12.6.2",
+    "framer-motion": "^12.6.3",
+    "gsap": "^3.12.7",
     "jszip": "^3.10.1",
     "lucide-react": "^0.484.0",
     "next": "15.2.4",
@@ -22,6 +23,7 @@
     "react-contenteditable": "^3.3.7",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
+    "react-scroll": "^1.9.3",
     "shadcn": "^2.4.0-canary.17",
     "tailwind-merge": "^3.0.2",
     "tw-animate-css": "^1.2.5"
