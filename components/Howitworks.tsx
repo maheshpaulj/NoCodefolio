@@ -108,7 +108,7 @@ export default function HowItWorks() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               {typeof step.icon === "string" ? (
-                <img
+                <img //eslint-disable-line @next/next/no-img-element
                   src={step.icon}
                   alt={step.title}
                   className="w-16 h-16 mx-auto mb-6"

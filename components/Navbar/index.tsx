@@ -1,16 +1,13 @@
 "use client";
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { Link as ScrollLink } from "react-scroll"; 
 
 export default function Navbar() {
-  const [darkMode, setDarkMode] = useState(false);
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full bg-gradient-to-r from-blue-500 to-teal-600 shadow-2xl p-4 flex justify-between items-center z-50 backdrop-blur-lg ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-r from-blue-500 to-teal-600'}`}
+      className={`fixed top-0 left-0 w-full bg-gradient-to-r from-blue-500 to-teal-600 shadow-2xl p-4 flex justify-between items-center z-50 backdrop-blur-lg`}
     >
       {/* Brand Name */}
       <Link href="/" className="text-4xl font-extrabold text-white hover:text-yellow-400 transition-colors ease-in-out duration-300">
