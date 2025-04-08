@@ -24,6 +24,7 @@
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "react-scroll": "^1.9.3",
+    "react-simple-typewriter": "^5.0.1",
     "shadcn": "^2.4.0-canary.17",
     "tailwind-merge": "^3.0.2",
     "tw-animate-css": "^1.2.5"
