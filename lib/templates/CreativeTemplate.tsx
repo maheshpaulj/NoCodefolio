@@ -136,7 +136,7 @@ export function CreativeTemplate({
         className="min-h-screen flex flex-col md:flex-row items-center justify-center pt-24 px-8 bg-gradient-to-r from-green-400 to-teal-500"
       >
         <motion.div whileHover={{ scale: 1.1 }} className="w-64 h-64 md:w-80 md:h-80">
-          <img
+          <img //eslint-disable-line @next/next/no-img-element
             src={data.profileImage || "https://via.placeholder.com/300"}
             alt="Profile"
             className="w-full h-full object-cover rounded-full shadow-xl border-4 border-white"

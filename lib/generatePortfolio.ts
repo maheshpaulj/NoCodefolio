@@ -1,6 +1,6 @@
 import JSZip from "jszip";
 import { PortfolioData } from "@/types/portfolio";
-import { modernTemplate } from "./templates/modern";
+import { modernTemplate } from "./templates/modernGenerator";
 // import { minimalTemplate } from "./templates/minimal";
 // import { creativeTemplate } from "./templates/creative";
 

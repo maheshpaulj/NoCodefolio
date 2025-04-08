@@ -101,10 +101,10 @@ export default function GeneratePage() {
               <motion.div
                 key={template.id}
                 whileHover={{ scale: 1.02 }}
-                className="bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer"
+                className="bg-white rounded-lg shadow-lg overflow-hidden"
                 onClick={() => handleTemplateSelect(template.id as "modern" | "minimal" | "creative")}
               >
-                <img
+                <img // eslint-disable-line @next/next/no-img-element
                   src={template.previewImage}
                   alt={`${template.name} Preview`}
                   className="w-full h-56 object-contain"
@@ -113,7 +113,7 @@ export default function GeneratePage() {
                   <h2 className="text-xl font-semibold">{template.name}</h2>
                   <p className="text-gray-600 mt-2">{template.description}</p>
                   <Button
-                    className="mt-4 w-full bg-blue-500 hover:bg-blue-600"
+                    className="mt-4 w-full bg-blue-500 hover:bg-blue-600 cursor-pointer"
                     onClick={() => handleTemplateSelect(template.id as "modern" | "minimal" | "creative")}
                   >
                     Select

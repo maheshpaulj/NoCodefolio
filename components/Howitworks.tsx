@@ -91,20 +91,21 @@ export default function HowItWorks() {
           {steps.map((step, index) => (
             <div
               key={index}
-              className="how-card relative bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col items-center text-center group overflow-hidden"
+              className="how-card bg-white/40 backdrop-blur-md rounded-3xl shadow-xl hover:shadow-xl transition-transform duration-300 hover:-translate-y-2 px-8 py-12"
+              initial={{ opacity: 0, y: 60 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
             >
-              {/* Step Counter */}
-              <div className="absolute top-4 left-4 w-10 h-10 rounded-full bg-yellow-400 text-black font-bold flex items-center justify-center shadow-md ring-2 ring-yellow-300/40 z-10">
-                {index + 1}
-              </div>
-
-              {/* Hover border glow */}
-              <div className="absolute inset-0 border-2 border-transparent group-hover:border-yellow-300/40 rounded-2xl transition-all duration-500 pointer-events-none" />
-
-              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                {step.icon}
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-white">
+              {typeof step.icon === "string" ? (
+                <img
+                  src={step.icon}
+                  alt={step.title}
+                  className="w-16 h-16 mx-auto mb-6"
+                />
+              ) : (
+                step.icon
+              )}
+              <h3 className="text-2xl font-semibold text-gray-800 mb-4">
                 {step.title}
               </h3>
               <p className="text-white/70">{step.description}</p>
