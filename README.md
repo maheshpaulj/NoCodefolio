@@ -6,7 +6,7 @@
     <strong>No code, no complexity, no cost.</strong>
   </p>
   <p>
-    <a href="https://your-live-app-url.com"><strong>🌐 View Live Demo</strong></a> ·
+    <a href="https://nocodefolio.vercel.app"><strong>🌐 View Site</strong></a> ·
     <a href="https://github.com/maheshpaulj/NoCodefolio/issues/new?assignees=&labels=bug&template=bug_report.md&title=">🐞 Report Bug</a> ·
     <a href="https://github.com/maheshpaulj/NoCodefolio/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=">🚀 Request Feature</a>
   </p>
