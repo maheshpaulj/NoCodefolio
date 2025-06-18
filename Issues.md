@@ -15,6 +15,7 @@ To Do
 [] Add icon to the pages(the portfolio)
 [x] Record Demo
 [x] in Generated portfolio package, make sure "BuildPortfolio" is used
+[] Analytics
 
 Publishing To do
 [] Tag harkirat Singh in twitter

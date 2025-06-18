@@ -17,11 +17,13 @@ function getFinalData(data: PortfolioData): PortfolioData {
       phone: data.contact?.phone || "",
     },
     template: "minimal",
+    favicon: "https://nocodefolio.vercel.app/favicon.ico"
   };
 }
 
 export function minimalTemplate(data: PortfolioData): Record<string, string> {
   const finalData = getFinalData(data);
+  const faviconLink = data.favicon || "/favicon.ico"; // Default favicon
 
   const pageContent = `
     'use client';
@@ -121,6 +123,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="${faviconLink}" />
+      </head>
       <body className={inter.className}>{children}</body>
     </html>
   );
@@ -128,7 +133,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     "app/page.tsx": pageContent,
     "app/globals.css": `@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\nhtml { scroll-behavior: smooth; }`,
     "package.json": JSON.stringify({
-      name: finalData.name.toLowerCase().replace(/\s+/g, "-") + "-buildportfolio-minimal",
+      name: finalData.name.toLowerCase().replace(/\s+/g, "-") + "-nocodefolio-minimal",
       version: "0.1.0",
       private: true,
       scripts: { dev: "next dev", build: "next build", start: "next start", lint: "next lint" },

@@ -53,6 +53,7 @@ export interface PortfolioData {
   template: TemplateId;
   vercelProjectId?: string;
   vercelDomain?: string;
+  favicon?: string;
 }
 
 /**

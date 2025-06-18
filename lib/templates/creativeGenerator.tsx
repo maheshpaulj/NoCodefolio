@@ -18,11 +18,13 @@ function getFinalData(data: PortfolioData): PortfolioData {
       phone: data.contact?.phone || "",
     },
     template: "creative",
+    favicon: "https://nocodefolio.vercel.app/favicon.ico"
   };
 }
 
 export function creativeTemplate(data: PortfolioData): Record<string, string> {
   const finalData = getFinalData(data);
+  const faviconLink = data.favicon || "/favicon.ico"; // Default favicon
 
   // Main Page Content (page.tsx)
   const pageContent = `
@@ -137,21 +139,24 @@ export function creativeTemplate(data: PortfolioData): Record<string, string> {
   // Configuration Files
   return {
     "app/layout.tsx": `
-import type { Metadata } from 'next';
-import { Lexend } from 'next/font/google';
-import './globals.css';
-const lexend = Lexend({ subsets: ['latin'] });
-export const metadata: Metadata = {
-  title: '${finalData.name} | Creative Portfolio',
-  description: 'Personal portfolio of ${finalData.name}',
-};
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <body className={lexend.className}>{children}</body>
-    </html>
-  );
-}`,
+      import type { Metadata } from 'next';
+      import { Lexend } from 'next/font/google';
+      import './globals.css';
+      const lexend = Lexend({ subsets: ['latin'] });
+      export const metadata: Metadata = {
+        title: '${finalData.name} | Creative Portfolio',
+        description: 'Personal portfolio of ${finalData.name}',
+      };
+      export default function RootLayout({ children }: { children: React.ReactNode }) {
+        return (
+          <html lang="en">
+          <head>
+            <link rel="icon" href="${faviconLink}" />
+          </head>
+            <body className={lexend.className}>{children}</body>
+          </html>
+        );
+      }`,
     "app/page.tsx": pageContent,
     "app/globals.css": `
 @tailwind base;
@@ -166,7 +171,7 @@ body {
 }
 `,
     "package.json": JSON.stringify({
-      name: finalData.name.toLowerCase().replace(/\s+/g, "-") + "-buildportfolio-creative",
+      name: finalData.name.toLowerCase().replace(/\s+/g, "-") + "-nocodefolio-creative",
       version: "0.1.0",
       private: true,
       scripts: { dev: "next dev", build: "next build", start: "next start", lint: "next lint" },

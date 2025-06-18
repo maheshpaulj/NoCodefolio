@@ -5,7 +5,7 @@ import { FiGithub, FiMail, FiArrowRight } from 'react-icons/fi';
 import AnimatedDiv from '@/components/AnimatedDiv';
 
 // Configuration for easy updates
-const GITHUB_REPO_URL = 'https://github.com/maheshpaulj/buildportfolio'; // Replace with your actual repo link
+const GITHUB_REPO_URL = 'https://github.com/maheshpaulj/NoCodefolio'; // Replace with your actual repo link
 const CONTACT_EMAIL = 'mahesh.paul.j@gmail.com'; // Replace with your preferred contact email
 
 const cardVariants = {

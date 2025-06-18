@@ -150,7 +150,7 @@ const LandingPage: NextPage = () => {
                 whileHover={{ scale: 1.05, y: -5 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 15 }}
-                href="mailto:mahesh.paul.j@gmail.com?subject=My BuildPortfolio Creation & Feedback!"
+                href="mailto:mahesh.paul.j@gmail.com?subject=My NoCodefolio Creation & Feedback!"
                 className="group inline-flex items-center gap-3 px-6 py-3 font-semibold text-white bg-slate-700 hover:bg-slate-600 rounded-lg shadow-lg transition-colors cursor-pointer"
               >
                 <FiMail className='transition-transform group-hover:rotate-[-15deg]' /> 

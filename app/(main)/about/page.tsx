@@ -59,7 +59,7 @@ export default function AboutPage() {
         >
           <h2 className="text-3xl font-bold mb-4">Why We Built This</h2>
           <p className="text-slate-400 leading-relaxed">
-            Building a portfolio is often the first step in a developer&apos;s career, but it can also be a time-consuming distraction from what really matters: honing your skills and building great projects. We wanted to bridge that gap. BuildPortfolio is a no-code tool that generates clean, production-ready code, giving you a beautiful portfolio you can host anywhere, with full ownership and control.
+            Building a portfolio is often the first step in a developer&apos;s career, but it can also be a time-consuming distraction from what really matters: honing your skills and building great projects. We wanted to bridge that gap. NoCodefolio is a no-code tool that generates clean, production-ready code, giving you a beautiful portfolio you can host anywhere, with full ownership and control.
           </p>
         </AnimatedDiv>
 
@@ -108,11 +108,11 @@ export default function AboutPage() {
           <FiHeart className="text-sky-400 text-5xl mx-auto mb-4" />
           <h2 className="text-3xl font-bold mb-4">This Project is Open Source</h2>
           <p className="text-slate-400 max-w-2xl mx-auto mb-8">
-            We believe in the power of community. BuildPortfolio is open source, and we welcome contributions of all kinds. The best way to help is by creating and sharing new templates!
+            We believe in the power of community. NoCodefolio is open source, and we welcome contributions of all kinds. The best way to help is by creating and sharing new templates!
           </p>
           <motion.div className='w-64' whileHover={{ scale: 1.05 }} transition={{ type: 'spring', stiffness: 300 }}>
             <Link 
-              href="https://github.com/mahesh-paul/buildportfolio" // Replace with your actual repo link
+              href="https://github.com/mahesh-paul/NoCodefolio" // Replace with your actual repo link
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-3 px-8 py-3 font-semibold text-white bg-slate-700 hover:bg-slate-600 rounded-lg shadow-lg"

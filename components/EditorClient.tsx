@@ -92,7 +92,7 @@ export default function EditorClient({ initialData }: EditorClientProps) {
     });
 
     const zipBlob = await zip.generateAsync({ type: "blob" });
-    saveAs(zipBlob, `${data.name.toLowerCase().replace(/\s+/g, "-") + " " + "BuildPortfolio" || "portfolio"}.zip`);
+    saveAs(zipBlob, `${data.name.toLowerCase().replace(/\s+/g, "-") + " " + "NoCodefolio" || "portfolio"}.zip`);
     toast.success('Download starting!', { id: 'zip' });
   };
 

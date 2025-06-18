@@ -1,4 +1,4 @@
-# BuildPortfolio
+# NoCodefolio
 
 A Next.js-based portfolio builder that allows users to create, customize, and download their personal portfolio websites with various templates.
 
@@ -10,7 +10,7 @@ A Next.js-based portfolio builder that allows users to create, customize, and do
 
 ## Project Structure
 ```
-BuildPortfolio/
+NoCodefolio/
 ├── app/                    # Next.js app directory
 │   ├── (main)/             # Main app routes
 │   │   ├── generate/       # Portfolio generation page
