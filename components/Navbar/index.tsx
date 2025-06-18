@@ -73,8 +73,8 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" onClick={closeMenus} className="flex items-center text-2xl font-bold">
-            <motion.div whileHover={{ rotate: -15 }}><SiBuildkite className="text-sky-400 mr-2" /></motion.div>
-            <span className="text-white">Build</span><span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-cyan-300">Portfolio</span>
+            <motion.div whileHover={{ rotate: -15 }}><Image src={"/assets/icon.png"} alt='logo' width={32} height={32} /> </motion.div>
+            <span className="text-white">NoCode</span><span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-cyan-300">folio</span>
           </Link>
 
           {/* === UPGRADED Desktop Navigation === */}

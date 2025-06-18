@@ -1,8 +1,8 @@
 'use client'; // Footer is a client component for animations
 
 import Link from 'next/link';
-import { FaGithub, FaTwitter, FaLinkedin } from 'react-icons/fa';
-import { SiBuildkite } from 'react-icons/si';
+import Image from 'next/image';
+import { FaGithub } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { FiMail, FiGithub as FiGithubDev } from 'react-icons/fi';
 
@@ -71,8 +71,8 @@ export default function Footer() {
           {/* Brand Column */}
           <motion.div variants={footerItemVariants} className="lg:col-span-2">
              <Link href="/" className="flex items-center text-2xl font-bold mb-4">
-                <SiBuildkite className="text-sky-400 mr-2" />
-                <span className="text-white">Build</span><span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-cyan-300">Portfolio</span>
+                <motion.div whileHover={{ rotate: -15 }}><Image src={"/assets/icon.png"} alt='logo' width={32} height={32} /> </motion.div>
+                <span className="text-white">NoCode</span><span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-cyan-300">folio</span>
             </Link>
             <p className="text-slate-400 max-w-xs">The ultimate no-code portfolio builder for developers and creatives.</p>
             <div className="flex gap-4 mt-6">
