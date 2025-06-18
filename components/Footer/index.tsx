@@ -1,49 +1,133 @@
-"use client";
+'use client'; // Footer is a client component for animations
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Link from 'next/link';
+import { FaGithub, FaTwitter, FaLinkedin } from 'react-icons/fa';
+import { SiBuildkite } from 'react-icons/si';
+import { motion } from 'framer-motion';
+import { FiMail, FiGithub as FiGithubDev } from 'react-icons/fi';
 
-gsap.registerPlugin(ScrollTrigger);
+// 1. === THE FIX: Define strict types for our data ===
+interface FooterLink {
+  name: string;
+  href: string;
+  icon?: React.ReactNode; // Optional property
+  target?: string;       // Optional property
+}
+
+interface LinkColumn {
+  title: string;
+  links: FooterLink[];
+}
+// ======================================================
+
+// Variants for orchestrating the footer animation
+const footerContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.1 } },
+};
+
+const footerItemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } },
+};
 
 export default function Footer() {
-  const footerRef = useRef(null);
-
-  useEffect(() => {
-    gsap.fromTo(
-      footerRef.current,
-      { opacity: 0, y: 30 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: footerRef.current,
-          start: "top 90%",
-        },
-      }
-    );
-  }, []);
-
+  // Apply the new, strict type to our data array
+  const linkCols: LinkColumn[] = [
+    { 
+      title: 'Product', 
+      links: [ 
+        { name: 'Guide', href: '/guide' }, 
+        { name: 'Generate', href: '/generate' },
+        { name: 'Templates', href: '/templates' }
+      ] 
+    },
+    { 
+      title: 'Company', 
+      links: [ 
+        { name: 'About Us', href: '/about' }, 
+        { name: 'Contact', href: '/contact' } 
+      ] 
+    },
+    { 
+      title: 'Developers', 
+      links: [ 
+        { name: 'Mail Us', href: 'mailto:contact.buildportfolio@gmail.com', icon: <FiMail /> }, 
+        { name: 'GitHub Repo', href: 'https://github.com/mahesh-paul/buildportfolio', icon: <FiGithubDev />, target: '_blank' } 
+      ] 
+    },
+  ];
+  
   return (
-    <footer
-      ref={footerRef}
-      className="relative w-full px-6 py-10 text-white text-center bg-white/5 backdrop-blur-md border-t border-white/10"
-    >
-      <p className="text-white/80 text-sm md:text-base">
-        © {new Date().getFullYear()} Portfolio Builder. All rights reserved.
-      </p>
+    <footer className="bg-slate-900 border-t border-slate-800">
+      <motion.div 
+        variants={footerContainerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        className="container mx-auto px-4 py-16"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-12">
+          {/* Brand Column */}
+          <motion.div variants={footerItemVariants} className="lg:col-span-2">
+             <Link href="/" className="flex items-center text-2xl font-bold mb-4">
+                <SiBuildkite className="text-sky-400 mr-2" />
+                <span className="text-white">Build</span><span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-cyan-300">Portfolio</span>
+            </Link>
+            <p className="text-slate-400 max-w-xs">The ultimate no-code portfolio builder for developers and creatives.</p>
+            <div className="flex gap-4 mt-6">
+              <motion.a whileHover={{ y: -3, scale: 1.1 }} href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-sky-400 transition-colors"><FaTwitter size={20} /></motion.a>
+              <motion.a whileHover={{ y: -3, scale: 1.1 }} href="https://github.com/mahesh-paul/buildportfolio" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-sky-400 transition-colors"><FaGithub size={20} /></motion.a>
+              <motion.a whileHover={{ y: -3, scale: 1.1 }} href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-sky-400 transition-colors"><FaLinkedin size={20} /></motion.a>
+            </div>
+          </motion.div>
 
-      <div className="mt-3 flex justify-center gap-4 text-white/70 text-sm">
-        <a href="#" className="hover:text-yellow-300 transition-colors">
-          Privacy Policy
-        </a>
-        <a href="#" className="hover:text-yellow-300 transition-colors">
-          Terms of Service
-        </a>
-      </div>
-      <div className="absolute top-[-80px] right-[-60px] w-72 h-72 bg-yellow-400 opacity-10 blur-[100px] rounded-full -z-10" />
+          {/* Link Columns */}
+          {linkCols.map(col => (
+            <motion.div variants={footerItemVariants} key={col.title}>
+              <h3 className="font-semibold text-white mb-4 tracking-wide">{col.title}</h3>
+              <ul className="space-y-3">
+                {col.links.map(link => {
+                  const isExternal = link.target === '_blank' || link.href.startsWith('mailto:');
+                  
+                  const linkContent = (
+                    <motion.span whileHover={{ x: link.icon ? 2 : 4 }} className="group-hover:text-sky-400 transition-colors flex items-center gap-2">
+                      {link.icon && <span className="transition-colors">{link.icon}</span>}
+                      {link.name}
+                    </motion.span>
+                  );
+
+                  return (
+                    <li key={link.name}>
+                      {/* 2. === THE FIX: Use <Link> for internal pages and <a> for external */}
+                      {isExternal ? (
+                        <a href={link.href} target={link.target} rel="noopener noreferrer" className="text-slate-400 group">
+                          {linkContent}
+                        </a>
+                      ) : (
+                        <Link href={link.href} className="text-slate-400 group">
+                          {linkContent}
+                        </Link>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Bottom Bar */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.8, duration: 0.5 }}
+          className="mt-16 pt-8 border-t border-slate-800 text-center text-sm text-slate-500"
+        >
+          <p>© {new Date().getFullYear()} BuildPortfolio. All rights reserved.</p>
+        </motion.div>
+      </motion.div>
     </footer>
   );
-}
+};

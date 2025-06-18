@@ -134,3 +134,67 @@
     animation: pulse-slow 10s ease-in-out infinite;
   }
 }
+
+.animated-gradient {
+  background-size: 200% 200%;
+  animation: gradient-move 15s ease-in-out infinite alternate;
+}
+
+@keyframes gradient-move {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
+/* --- Digital Glitch Effect for 404 Page --- */
+.glitch-effect {
+  position: relative;
+  color: white;
+  font-size: 6rem; /* Adjust as needed */
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+}
+
+.glitch-effect > .glitch-base {
+  position: relative;
+  z-index: 1;
+}
+
+.glitch-effect > .glitch-layer {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen; /* This creates the color blending effect */
+  animation: glitch-animation 1s linear infinite;
+}
+
+.glitch-effect > .glitch-layer-1 {
+  color: #ef4444; /* Red */
+  clip-path: polygon(0 0, 100% 0, 100% 30%, 0 30%);
+}
+
+.glitch-effect > .glitch-layer-2 {
+  color: #38bdf8; /* Sky Blue */
+  clip-path: polygon(0 70%, 100% 70%, 100% 100%, 0 100%);
+  animation-delay: 0.05s;
+  animation-direction: reverse;
+}
+
+@keyframes glitch-animation {
+  2%, 64% {
+    transform: translate(2px, 0) skew(0deg);
+  }
+  4%, 60% {
+    transform: translate(-2px, 0) skew(0deg);
+  }
+  62% {
+    transform: translate(0, 0) skew(5deg);
+  }
+}

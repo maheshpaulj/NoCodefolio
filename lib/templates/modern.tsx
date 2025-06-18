@@ -1,19 +1,406 @@
 "use client";
-import { PortfolioData, WorkExperience, Skill, Project, Contact } from "@/types/portfolio";
-import { motion } from "framer-motion";
-import { FaLinkedin, FaGithub, FaEnvelope, FaPhone, FaPlus } from "react-icons/fa";
-import ContentEditable from "react-contenteditable";
-import { Input } from "@/components/ui/input";
 
+import { useState, useEffect, JSX } from "react";
+import {
+  PortfolioData,
+  WorkExperience,
+  Skill,
+  Project,
+  SerializablePortfolio,
+} from "@/types/portfolio";
+import { motion } from "framer-motion";
+import {
+  FiLinkedin,
+  FiGithub,
+  FiMail,
+  FiDownload,
+  FiPlus,
+  FiTrash2,
+  FiExternalLink,
+} from "react-icons/fi";
+import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
+import { Input } from "@/components/ui/input";
+import Image from "next/image";
+
+// --- Custom Hook for Navbar Active State ---
+function useActiveSection() {
+  const [activeSection, setActiveSection] = useState("profile");
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = [
+        "profile",
+        "about",
+        "experience",
+        "skills",
+        "projects",
+        "contact",
+      ];
+      let currentSection = "profile";
+      for (const sectionId of sections) {
+        const sectionEl = document.getElementById(sectionId);
+        if (
+          sectionEl &&
+          sectionEl.getBoundingClientRect().top < window.innerHeight / 2
+        ) {
+          currentSection = sectionId;
+        }
+      }
+      setActiveSection(currentSection);
+    };
+    const previewArea = document.querySelector(
+      ".flex-grow.bg-white.relative.overflow-hidden > div"
+    );
+    const scrollContainer = previewArea || window;
+    scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => scrollContainer.removeEventListener("scroll", handleScroll);
+  }, []);
+  return activeSection;
+}
+
+// --- Props Interface (Simplified) ---
 interface ModernTemplateProps {
-  data: PortfolioData;
+  data: SerializablePortfolio;
   isEditable?: boolean;
-  onUpdate?: (data: PortfolioData) => void;
+  onUpdate?: (data: SerializablePortfolio) => void;
   onAddWorkExperience?: () => void;
   onAddSkill?: () => void;
   onAddProject?: () => void;
+  onDeleteWorkExperience?: (index: number) => void;
+  onDeleteSkill?: (index: number) => void;
+  onDeleteProject?: (index: number) => void;
 }
 
+// === SUB-COMPONENTS ===
+const TemplateNavbar: React.FC<{ name: string; activeSection: string }> = ({
+  name,
+  activeSection,
+}) => {
+  const navItems = ["about", "experience", "skills", "projects", "contact"];
+  const scrollTo = (id: string) =>
+    document
+      .getElementById(id)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  return (
+    <nav className="sticky top-0 z-50 px-4 sm:px-8 py-4 bg-white/80 backdrop-blur-lg border-b border-slate-200 transition-colors">
+      <div className="max-w-5xl mx-auto flex justify-between items-center">
+        <button
+          onClick={() => scrollTo("profile")}
+          className="text-xl font-bold text-slate-800 cursor-pointer"
+        >
+          {name}
+        </button>
+        <div className="hidden md:flex items-center gap-6">
+          {navItems.map((item) => (
+            <button
+              key={item}
+              onClick={() => scrollTo(item)}
+              className={`capitalize transition-colors text-sm font-medium cursor-pointer ${
+                activeSection === item
+                  ? "text-sky-500"
+                  : "text-slate-500 hover:text-sky-500"
+              }`}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      </div>
+    </nav>
+  );
+};
+const Section: React.FC<{
+  id: string;
+  title: string;
+  subtitle: string;
+  children: React.ReactNode;
+  className?: string;
+}> = ({ id, title, subtitle, children, className = "" }) => (
+  <motion.section
+    id={id}
+    initial={{ opacity: 0, y: 50 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, amount: 0.2 }}
+    transition={{ duration: 0.6 }}
+    className={`min-h-screen w-full flex flex-col items-center justify-center px-4 sm:px-8 py-24 ${className}`}
+  >
+    <div className="text-center mb-12">
+      <p className="text-lg text-slate-500">{subtitle}</p>
+      <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900">
+        {title}
+      </h2>
+    </div>
+    <div className="w-full max-w-5xl">{children}</div>
+  </motion.section>
+);
+const Editable: React.FC<{
+  html: string;
+  onChange: (value: string) => void;
+  isEditable: boolean;
+  className?: string;
+  tagName?: keyof JSX.IntrinsicElements;
+}> = ({ html, onChange, isEditable, className, tagName = "div" }) => {
+  if (!isEditable) {
+    return (
+      <div
+        className={className}
+        dangerouslySetInnerHTML={{ __html: html || "" }}
+      />
+    );
+  }
+  return (
+    <ContentEditable
+      html={html || ""}
+      onChange={(e: ContentEditableEvent) => onChange(e.target.value)}
+      tagName={tagName}
+      className={`outline-none focus:ring-2 focus:ring-sky-500 rounded-md transition-all p-1 -m-1 ${
+        isEditable
+          ? "hover:bg-slate-200/50 border border-dashed border-transparent hover:border-sky-500"
+          : ""
+      } ${className}`}
+    />
+  );
+};
+const WorkExperienceCard: React.FC<{
+  exp: WorkExperience;
+  index: number;
+  isEditable: boolean;
+  onUpdate: Function; // eslint-disable-line @typescript-eslint/no-unsafe-function-type
+  onDelete?: (index: number) => void;
+}> = ({ exp, index, isEditable, onUpdate, onDelete }) => (
+  <motion.div
+    initial={{ x: -50, opacity: 0 }}
+    whileInView={{ x: 0, opacity: 1 }}
+    transition={{ type: "spring" }}
+    className="relative group p-6 bg-white border border-slate-200 rounded-xl"
+  >
+    {isEditable && onDelete && (
+      <button
+        onClick={() => onDelete(index)}
+        className="absolute -top-2 -right-2 p-1.5 bg-red-500/80 hover:bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+      >
+        <FiTrash2 size={14} />
+      </button>
+    )}
+    <Editable
+      html={exp.title}
+      onChange={(val) => onUpdate("workExperience", index, "title", val)}
+      isEditable={isEditable}
+      tagName="h3"
+      className="text-2xl font-bold text-slate-900"
+    />
+    <div className="flex items-baseline gap-4 mt-1">
+      <Editable
+        html={exp.company}
+        onChange={(val) => onUpdate("workExperience", index, "company", val)}
+        isEditable={isEditable}
+        tagName="p"
+        className="text-lg text-sky-500 font-semibold"
+      />
+      <Editable
+        html={exp.duration}
+        onChange={(val) => onUpdate("workExperience", index, "duration", val)}
+        isEditable={isEditable}
+        tagName="p"
+        className="text-sm text-slate-500"
+      />
+    </div>
+    <Editable
+      html={exp.description}
+      onChange={(val) => onUpdate("workExperience", index, "description", val)}
+      isEditable={isEditable}
+      tagName="p"
+      className="mt-3 text-slate-600"
+    />
+  </motion.div>
+);
+const SkillCard: React.FC<{
+  skill: Skill;
+  index: number;
+  isEditable: boolean;
+  onUpdate: Function; // eslint-disable-line @typescript-eslint/no-unsafe-function-type
+  onDelete?: (index: number) => void;
+}> = ({ skill, index, isEditable, onUpdate, onDelete }) => (
+  <motion.div
+    initial={{ scale: 0.8, opacity: 0 }}
+    whileInView={{ scale: 1, opacity: 1 }}
+    transition={{ type: "spring" }}
+    className="relative group flex flex-col items-center p-6 bg-white border border-slate-200 rounded-xl text-center"
+  >
+    {isEditable && onDelete && (
+      <button
+        onClick={() => onDelete(index)}
+        className="absolute -top-2 -right-2 p-1.5 bg-red-500/80 hover:bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+      >
+        <FiTrash2 size={14} />
+      </button>
+    )}
+    {skill.icon && (
+      <Image
+        src={skill.icon}
+        alt={skill.name}
+        width={48}
+        height={48}
+        className="mb-4 object-contain h-12"
+      />
+    )}
+    {isEditable && (
+      <Input
+        type="text"
+        placeholder="Icon URL"
+        value={skill.icon || ""}
+        onChange={(e) => onUpdate("skills", index, "icon", e.target.value)}
+        className="w-full text-xs bg-slate-100 border-slate-300 mb-2"
+      />
+    )}
+    <Editable
+      html={skill.name}
+      onChange={(val) => onUpdate("skills", index, "name", val)}
+      isEditable={isEditable}
+      tagName="h3"
+      className="text-xl font-semibold text-slate-900"
+    />
+    <Editable
+      html={skill.level}
+      onChange={(val) => onUpdate("skills", index, "level", val)}
+      isEditable={isEditable}
+      tagName="p"
+      className="text-slate-500"
+    />
+  </motion.div>
+);
+const ProjectCard: React.FC<{
+  project: Project;
+  index: number;
+  isEditable: boolean;
+  onUpdate: Function; // eslint-disable-line @typescript-eslint/no-unsafe-function-type
+  onDelete?: (index: number) => void;
+}> = ({ project, index, isEditable, onUpdate, onDelete }) => (
+  <motion.div
+    whileHover={{ y: -5 }}
+    className="relative group bg-white border border-slate-200 rounded-xl overflow-hidden flex flex-col"
+  >
+    {isEditable && onDelete && (
+      <button
+        onClick={() => onDelete(index)}
+        className="absolute top-2 right-2 z-10 p-1.5 bg-red-500/80 hover:bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+      >
+        <FiTrash2 size={14} />
+      </button>
+    )}
+    <Image
+      src={project.image || "/placeholder-project.jpg"}
+      alt={project.title}
+      width={500}
+      height={300}
+      className="w-full h-56 object-cover bg-slate-100"
+    />
+    <div className="p-6 flex flex-col flex-grow">
+      <Editable
+        html={project.title}
+        onChange={(val) => onUpdate("projects", index, "title", val)}
+        isEditable={isEditable}
+        tagName="h3"
+        className="text-2xl font-bold text-slate-900 mb-4"
+      />
+      <div className="flex-grow"></div>
+      <div className="flex gap-4 mt-auto">
+        {project.githubLink && (
+          <motion.a
+            href={project.githubLink}
+            target="_blank"
+            className="flex-1 text-center py-2 px-4 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-semibold transition-colors cursor-pointer"
+          >
+            <FiGithub className="inline mr-2" /> GitHub
+          </motion.a>
+        )}
+        {project.liveDemoLink && (
+          <motion.a
+            href={project.liveDemoLink}
+            target="_blank"
+            className="flex-1 text-center py-2 px-4 bg-sky-500 hover:bg-sky-600 text-white rounded-lg font-semibold transition-colors cursor-pointer"
+          >
+            <FiExternalLink className="inline mr-2" /> Live Demo
+          </motion.a>
+        )}
+      </div>
+      {isEditable && (
+        <div className="mt-4 space-y-2">
+          <Input
+            type="text"
+            placeholder="Image URL"
+            value={project.image}
+            onChange={(e) =>
+              onUpdate("projects", index, "image", e.target.value)
+            }
+            className="w-full text-xs bg-slate-100 border-slate-300"
+          />
+          <Input
+            type="text"
+            placeholder="GitHub Link"
+            value={project.githubLink}
+            onChange={(e) =>
+              onUpdate("projects", index, "githubLink", e.target.value)
+            }
+            className="w-full text-xs bg-slate-100 border-slate-300"
+          />
+          <Input
+            type="text"
+            placeholder="Live Demo Link"
+            value={project.liveDemoLink || ""}
+            onChange={(e) =>
+              onUpdate("projects", index, "liveDemoLink", e.target.value)
+            }
+            className="w-full text-xs bg-slate-100 border-slate-300"
+          />
+        </div>
+      )}
+    </div>
+  </motion.div>
+);
+const ContactItem: React.FC<{
+  icon: React.ReactNode;
+  isEditable: boolean;
+  value?: string;
+  href?: string;
+  onUpdate: (val: string) => void;
+  placeholder?: string;
+  hideLink?: boolean;
+}> = ({ icon, isEditable, value, href, onUpdate, placeholder, hideLink }) => (
+  <div>
+    {isEditable ? (
+      <div className="flex items-center gap-2">
+        <span className="text-slate-500">{icon}</span>
+        <Input
+          type="text"
+          placeholder={placeholder}
+          value={value || ""}
+          onChange={(e) => onUpdate(e.target.value)}
+          className="w-full bg-slate-100 border-slate-300"
+        />
+      </div>
+    ) : (
+      value && (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex flex-col items-center justify-center cursor-pointer"
+        >
+          <motion.div
+            whileHover={{ scale: 1.2 }}
+            className="flex gap-2 text-slate-500 hover:text-sky-500"
+          >
+            {icon}
+            {!hideLink && value}
+          </motion.div>
+        </a>
+      )
+    )}
+  </div>
+);
+
+// === MAIN TEMPLATE COMPONENT ===
 export function ModernTemplate({
   data,
   isEditable = false,
@@ -21,608 +408,294 @@ export function ModernTemplate({
   onAddWorkExperience,
   onAddSkill,
   onAddProject,
+  onDeleteWorkExperience,
+  onDeleteSkill,
+  onDeleteProject,
 }: ModernTemplateProps) {
-  const handleChange = (field: keyof PortfolioData, value: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+  const activeSection = useActiveSection();
+  const handleUpdate = (field: keyof PortfolioData, value: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    if (isEditable && onUpdate) onUpdate({ ...data, [field]: value });
+  };
+  const handleNestedUpdate = <T extends object>(
+    objKey: keyof PortfolioData,
+    field: keyof T,
+    value: string
+  ) => {
     if (isEditable && onUpdate) {
-      const newData = { ...data, [field]: value };
-      onUpdate(newData);
+      const newObject = { ...(data[objKey] as T), [field]: value };
+      onUpdate({ ...data, [objKey]: newObject });
     }
   };
-
-  const updateWorkExperience = (index: number, key: keyof WorkExperience, value: string) => {
+  const handleArrayUpdate = <T extends object>(
+    arrayKey: keyof PortfolioData,
+    index: number,
+    field: keyof T,
+    value: string
+  ) => {
     if (isEditable && onUpdate) {
-      const newExperience = [...data.workExperience];
-      if (index >= 0 && index < newExperience.length) {
-        newExperience[index] = { ...newExperience[index], [key]: value };
-        handleChange("workExperience", newExperience);
-      }
+      const newArray = [...(data[arrayKey] as T[])];
+      newArray[index] = { ...newArray[index], [field]: value };
+      onUpdate({ ...data, [arrayKey]: newArray });
     }
   };
-
-  const updateSkill = (index: number, key: keyof Skill, value: string) => {
-    if (isEditable && onUpdate) {
-      const newSkills = [...data.skills];
-      if (index >= 0 && index < newSkills.length) {
-        newSkills[index] = { ...newSkills[index], [key]: value };
-        handleChange("skills", newSkills);
-      }
-    }
-  };
-
-  const updateProject = (index: number, key: keyof Project, value: string) => {
-    if (isEditable && onUpdate) {
-      const newProjects = [...data.projects];
-      if (index >= 0 && index < newProjects.length) {
-        newProjects[index] = { ...newProjects[index], [key]: value };
-        handleChange("projects", newProjects);
-      }
-    }
-  };
-
-  const updateContact = (key: keyof Contact, value: string) => {
-    if (isEditable && onUpdate) {
-      const newContact = { ...data.contact, [key]: value };
-      handleChange("contact", newContact);
-    }
-  };
-
-  const noop = () => {};
 
   return (
-    <div className="min-h-screen w-screen bg-gray-50 text-gray-800 font-poppins">
-      <motion.nav
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 120, damping: 20 }}
-        className={`bg-white shadow-lg p-6 flex justify-between items-center ${
-          isEditable ? "" : "fixed top-0 left-0 right-0 z-50"
-        }`}
-      >
-        {isEditable ? (
-          <ContentEditable
-            html={data.name || "Your Name"}
-            onChange={(e) => handleChange("name", e.target.value)}
-            className="text-2xl font-bold text-gray-900 border-2 border-dashed border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        ) : (
-          <a
-            href="#profile"
-            className="text-2xl font-bold text-gray-900 cursor-pointer"
-            onClick={(e) => {
-              e.preventDefault();
-              document.querySelector("#profile")?.scrollIntoView({ behavior: "smooth" });
-            }}
-          >
-            {data.name || "Your Name"}
-          </a>
-        )}
-        <ul className="flex gap-8 text-lg">
-          {["about", "experience", "skills", "projects", "contact"]
-            .filter((section) => {
-              if (section === "about" && !data.aboutText) return false;
-              if (section === "experience" && (!data.workExperience || data.workExperience.length === 0)) return false;
-              if (section === "skills" && (!data.skills || data.skills.length === 0)) return false;
-              if (section === "projects" && (!data.projects || data.projects.length === 0)) return false;
-              if (
-                section === "contact" &&
-                (!data.contact?.email && !data.contact?.linkedin && !data.contact?.github && !data.contact?.phone)
-              )
-                return false;
-              return true;
-            })
-            .map((section) => (
-              <motion.li
-                key={section}
-                whileHover={{ scale: 1.1, color: "#3b82f6" }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <a
-                  href={`#${section}`}
-                  className="text-gray-700 hover:text-blue-500 transition-colors capitalize"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.querySelector(`#${section}`)?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                >
-                  {section}
-                </a>
-              </motion.li>
-            ))}
-        </ul>
-      </motion.nav>
-
-      <motion.section
-        id="profile"
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="min-h-screen flex flex-col md:flex-row items-center justify-center pt-24 px-8 bg-gradient-to-br from-blue-50 to-gray-100"
-      >
-        <motion.div whileHover={{ scale: 1.05 }} className="w-64 h-64 md:w-80 md:h-80">
-          <img // eslint-disable-line  @next/next/no-img-element
-            src={data.profileImage || "https://via.placeholder.com/300"}
-            alt="Profile"
-            className="w-full h-full object-cover rounded-full shadow-xl border-4 border-white"
-          />
-          {isEditable && (
-            <Input
-              type="text"
-              placeholder="Profile Image URL"
-              value={data.profileImage || ""}
-              onChange={(e) => handleChange("profileImage", e.target.value)}
-              className="mt-4 text-sm border-2 border-dashed border-blue-300"
-            />
-          )}
-        </motion.div>
-        <div className="text-center md:text-left md:ml-12 mt-8 md:mt-0 flex-1 max-w-lg">
-          <p className="text-lg text-gray-600">Hello, I&apos;m</p>
-          {isEditable ? (
-            <ContentEditable
-              html={data.name || "Your Name"}
-              onChange={(e) => handleChange("name", e.target.value)}
-              className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 border-2 border-dashed border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          ) : (
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{data.name || "Your Name"}</h1>
-          )}
-          {data.bio && (
-            isEditable ? (
-              <ContentEditable
-                html={data.bio}
-                onChange={(e) => handleChange("bio", e.target.value)}
-                className="text-xl md:text-2xl text-gray-700 mb-6 border-2 border-dashed border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            ) : (
-              <p
-                className="text-xl md:text-2xl text-gray-700 mb-6"
-                dangerouslySetInnerHTML={{ __html: data.bio }}
-              />
-            )
-          )}
-          {data.resumeLink && (
-            <>
-              <motion.a
-                href={data.resumeLink}
-                whileHover={{ scale: 1.1 }}
-                className="inline-block px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors text-lg font-medium"
-              >
-                Download CV
-              </motion.a>
-              {isEditable && (
-                <Input
-                  type="text"
-                  placeholder="Resume URL"
-                  value={data.resumeLink || ""}
-                  onChange={(e) => handleChange("resumeLink", e.target.value)}
-                  className="mt-4 text-sm border-2 border-dashed border-blue-300"
+    <div className="font-sans selection:bg-sky-500/20">
+      <div className="min-h-screen bg-white text-slate-700 transition-colors">
+        <TemplateNavbar name={data.name} activeSection={activeSection} />
+        <section
+          id="profile"
+          className="min-h-screen flex items-center justify-center px-4 sm:px-8 py-24 bg-slate-50"
+        >
+          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16 max-w-5xl mx-auto">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", delay: 0.2 }}
+            >
+              <div className="relative w-48 h-48 md:w-64 md:h-64 group">
+                <Image
+                  src={data.profileImage || "/placeholder-avatar.jpg"}
+                  alt="Profile"
+                  width={256}
+                  height={256}
+                  className="rounded-full object-cover w-full h-full border-4 border-slate-200 shadow-2xl"
                 />
-              )}
-            </>
-          )}
-          {(data.contact?.linkedin || data.contact?.github) && (
-            <div className="flex gap-6 justify-center md:justify-start mt-6">
-              {data.contact.linkedin && (
-                <motion.a whileHover={{ scale: 1.2 }} href={data.contact.linkedin}>
-                  <FaLinkedin className="w-8 h-8 text-blue-700" />
-                </motion.a>
-              )}
-              {data.contact.github && (
-                <motion.a whileHover={{ scale: 1.2 }} href={data.contact.github}>
-                  <FaGithub className="w-8 h-8 text-gray-800" />
-                </motion.a>
-              )}
-            </div>
-          )}
-        </div>
-      </motion.section>
-
-      {data.aboutText && (
-        <motion.section
-          id="about"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="min-h-screen flex flex-col items-center justify-center px-8 py-16 bg-white"
-        >
-          <ContentEditable
-            html="Get To Know More"
-            disabled
-            onChange={noop}
-            className="text-lg text-gray-600"
-          />
-          <ContentEditable
-            html="About Me"
-            disabled
-            onChange={noop}
-            className="text-4xl font-bold text-gray-900 mb-8"
-          />
-          {isEditable ? (
-            <ContentEditable
-              html={data.aboutText}
-              onChange={(e) => handleChange("aboutText", e.target.value)}
-              className="text-lg text-gray-700 max-w-3xl text-center leading-relaxed border-2 border-dashed border-blue-300 p-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          ) : (
-            <p className="text-lg text-gray-700 max-w-3xl text-center leading-relaxed">{data.aboutText}</p>
-          )}
-        </motion.section>
-      )}
-
-      {data.workExperience && data.workExperience.length > 0 && (
-        <motion.section
-          id="experience"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="min-h-screen flex flex-col items-center justify-center px-8 py-16 bg-gray-50"
-        >
-          <ContentEditable
-            html="My Journey"
-            disabled
-            onChange={noop}
-            className="text-lg text-gray-600"
-          />
-          <ContentEditable
-            html="Work Experience"
-            disabled
-            onChange={noop}
-            className="text-4xl font-bold text-gray-900 mb-12"
-          />
-          <div className="max-w-4xl w-full">
-            <div className="space-y-12">
-              {data.workExperience.map((exp, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ x: index % 2 === 0 ? -50 : 50, opacity: 0 }}
-                  whileInView={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.5, delay: index * 0.2 }}
-                  className="flex flex-col md:flex-row items-start gap-6 bg-white p-6 rounded-lg shadow-md"
-                >
-                  {exp.duration && (
-                    <div className="md:w-1/3 text-center md:text-right">
-                      {isEditable ? (
-                        <ContentEditable
-                          html={exp.duration}
-                          onChange={(e) => updateWorkExperience(index, "duration", e.target.value)}
-                          className="text-lg text-gray-600 border-2 border-dashed border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                      ) : (
-                        <p className="text-lg text-gray-600">{exp.duration}</p>
-                      )}
-                    </div>
-                  )}
-                  <div className="md:w-2/3 text-center md:text-left">
-                    {exp.title && (
-                      isEditable ? (
-                        <ContentEditable
-                          html={exp.title}
-                          onChange={(e) => updateWorkExperience(index, "title", e.target.value)}
-                          className="text-2xl font-semibold text-gray-900 border-2 border-dashed border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                      ) : (
-                        <h2 className="text-2xl font-semibold text-gray-900">{exp.title}</h2>
-                      )
-                    )}
-                    {exp.company && (
-                      isEditable ? (
-                        <ContentEditable
-                          html={exp.company}
-                          onChange={(e) => updateWorkExperience(index, "company", e.target.value)}
-                          className="text-lg text-blue-600 border-2 border-dashed border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                      ) : (
-                        <p className="text-lg text-blue-600">{exp.company}</p>
-                      )
-                    )}
-                    {exp.description && (
-                      isEditable ? (
-                        <ContentEditable
-                          html={exp.description}
-                          onChange={(e) => updateWorkExperience(index, "description", e.target.value)}
-                          className="text-gray-700 mt-2 border-2 border-dashed border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                      ) : (
-                        <p className="text-gray-700 mt-2">{exp.description}</p>
-                      )
-                    )}
+                {isEditable && (
+                  <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Input
+                      type="text"
+                      placeholder="Image URL"
+                      value={data.profileImage || ""}
+                      onChange={(e) =>
+                        handleUpdate("profileImage", e.target.value)
+                      }
+                      className="w-10/12 text-xs bg-slate-100 border-slate-300"
+                    />
                   </div>
-                </motion.div>
-              ))}
+                )}
+              </div>
+            </motion.div>
+            <div className="text-center md:text-left">
+              <Editable
+                html={data.name || "Your Name"}
+                onChange={(val) => handleUpdate("name", val)}
+                isEditable={isEditable}
+                tagName="h1"
+                className="text-4xl md:text-6xl font-extrabold text-slate-900 mb-2"
+              />
+              <Editable
+                html={
+                  data.bio ||
+                  "Creative <span class='text-sky-400'>Frontend Developer</span>"
+                }
+                onChange={(val) => handleUpdate("bio", val)}
+                isEditable={isEditable}
+                tagName="p"
+                className="text-xl md:text-2xl text-slate-600 mb-6"
+              />
+              <div className="flex flex-wrap items-center gap-4 justify-center md:justify-start">
+                <motion.a
+                  href={data.resumeLink || "#"}
+                  target="_blank"
+                  whileHover={{ scale: 1.05 }}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-sky-500 text-white rounded-lg font-semibold hover:bg-sky-600 transition-colors cursor-pointer"
+                >
+                  <FiDownload /> Download CV
+                </motion.a>
+                {isEditable && (
+                  <Input
+                    type="text"
+                    placeholder="Resume URL"
+                    value={data.resumeLink || ""}
+                    onChange={(e) => handleUpdate("resumeLink", e.target.value)}
+                    className="bg-slate-100 border-slate-300"
+                  />
+                )}
+                <div className="flex gap-4 items-center border-l-2 border-slate-200 pl-4">
+                  <ContactItem
+                    hideLink={true}
+                    icon={<FiLinkedin size={24} />}
+                    isEditable={isEditable}
+                    value={data.contact?.linkedin}
+                    href={data.contact?.linkedin}
+                    onUpdate={(val) =>
+                      handleNestedUpdate("contact", "linkedin", val)
+                    }
+                    placeholder="LinkedIn URL"
+                  />
+                  <ContactItem
+                    hideLink={true}
+                    icon={<FiGithub size={24} />}
+                    isEditable={isEditable}
+                    value={data.contact?.github}
+                    href={data.contact?.github}
+                    onUpdate={(val) =>
+                      handleNestedUpdate("contact", "github", val)
+                    }
+                    placeholder="GitHub URL"
+                  />
+                  <ContactItem
+                    hideLink={true}
+                    icon={<FiMail size={24} />}
+                    isEditable={isEditable}
+                    value={data.contact?.email}
+                    href={`mailto:${data.contact?.email}`}
+                    onUpdate={(val) =>
+                      handleNestedUpdate("contact", "email", val)
+                    }
+                    placeholder="Email Address"
+                  />
+                </div>
+              </div>
             </div>
-            {isEditable && onAddWorkExperience && (
+          </div>
+        </section>
+        <Section
+          id="about"
+          title="About Me"
+          subtitle="Get To Know More"
+          className="bg-white"
+        >
+          <Editable
+            html={data.aboutText || "Your about text goes here..."}
+            onChange={(val) => handleUpdate("aboutText", val)}
+            isEditable={isEditable}
+            tagName="p"
+            className="text-lg text-center max-w-3xl mx-auto leading-relaxed text-slate-600"
+          />
+        </Section>
+        <Section
+          id="experience"
+          title="Work Experience"
+          subtitle="My Journey"
+          className="bg-slate-50"
+        >
+          <div className="space-y-8">
+            {data.workExperience.map((exp, index) => (
+              <WorkExperienceCard
+                key={index}
+                exp={exp}
+                index={index}
+                isEditable={isEditable}
+                onUpdate={handleArrayUpdate}
+                onDelete={onDeleteWorkExperience}
+              />
+            ))}
+          </div>
+          {isEditable && onAddWorkExperience && (
+            <div className="text-center mt-12">
               <button
                 onClick={onAddWorkExperience}
-                className="mt-6 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full text-lg"
+                className="group flex items-center gap-2 mx-auto px-6 py-3 font-semibold text-white bg-sky-500 rounded-lg hover:bg-sky-600 transition-all cursor-pointer"
               >
-                <FaPlus className="inline mr-2" /> Add Experience
+                <FiPlus /> Add Experience
               </button>
-            )}
-          </div>
-        </motion.section>
-      )}
-
-      {data.skills && data.skills.length > 0 && (
-        <motion.section
+            </div>
+          )}
+        </Section>
+        <Section
           id="skills"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="min-h-screen flex flex-col items-center justify-center px-8 py-16 bg-white"
+          title="Skills"
+          subtitle="My Expertise"
+          className="bg-white"
         >
-          <ContentEditable
-            html="My Expertise"
-            disabled
-            onChange={noop}
-            className="text-lg text-gray-600"
-          />
-          <ContentEditable
-            html="Skills"
-            disabled
-            onChange={noop}
-            className="text-4xl font-bold text-gray-900 mb-12"
-          />
-          <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {data.skills.map((skill, index) => (
-              <motion.div
+              <SkillCard
                 key={index}
-                initial={{ scale: 0.9, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="p-6 bg-gray-50 rounded-lg shadow-md text-center"
-              >
-                {skill.icon && (
-                  <img src={skill.icon} alt={skill.name} className="w-12 h-12 mx-auto mb-4 object-contain" /> // eslint-disable-line @next/next/no-img-element
-                )}
-                {isEditable && (
-                  <Input
-                    type="text"
-                    placeholder="Skill Icon URL (optional)"
-                    value={skill.icon || ""}
-                    onChange={(e) => updateSkill(index, "icon", e.target.value)}
-                    className="mb-4 text-sm border-2 border-dashed border-blue-300"
-                  />
-                )}
-                {skill.name && (
-                  isEditable ? (
-                    <ContentEditable
-                      html={skill.name}
-                      onChange={(e) => updateSkill(index, "name", e.target.value)}
-                      className="text-xl font-semibold text-gray-900 border-2 border-dashed border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  ) : (
-                    <h2 className="text-xl font-semibold text-gray-900">{skill.name}</h2>
-                  )
-                )}
-                {skill.level && (
-                  isEditable ? (
-                    <ContentEditable
-                      html={skill.level}
-                      onChange={(e) => updateSkill(index, "level", e.target.value)}
-                      className="text-gray-600 border-2 border-dashed border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  ) : (
-                    <p className="text-gray-600">{skill.level}</p>
-                  )
-                )}
-              </motion.div>
+                skill={skill}
+                index={index}
+                isEditable={isEditable}
+                onUpdate={handleArrayUpdate}
+                onDelete={onDeleteSkill}
+              />
             ))}
-            {isEditable && onAddSkill && (
+          </div>
+          {isEditable && onAddSkill && (
+            <div className="text-center mt-12">
               <button
                 onClick={onAddSkill}
-                className="mt-6 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full text-lg"
+                className="group flex items-center gap-2 mx-auto px-6 py-3 font-semibold text-white bg-sky-500 rounded-lg hover:bg-sky-600 transition-all cursor-pointer"
               >
-                <FaPlus className="inline mr-2" /> Add Skill
+                <FiPlus /> Add Skill
               </button>
-            )}
-          </div>
-        </motion.section>
-      )}
-
-      {data.projects && data.projects.length > 0 && (
-        <motion.section
+            </div>
+          )}
+        </Section>
+        <Section
           id="projects"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="min-h-screen flex flex-col items-center justify-center px-8 py-16 bg-gray-50"
+          title="Projects"
+          subtitle="Browse My Recent Work"
+          className="bg-slate-50"
         >
-          <ContentEditable
-            html="Browse My Recent"
-            disabled
-            onChange={noop}
-            className="text-lg text-gray-600"
-          />
-          <ContentEditable
-            html="Projects"
-            disabled
-            onChange={noop}
-            className="text-4xl font-bold text-gray-900 mb-12"
-          />
-          <div className="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {data.projects.map((project, index) => (
-              <motion.div
+              <ProjectCard
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white p-6 rounded-lg shadow-md"
-              >
-                {project.image && (
-                  <img // eslint-disable-line @next/next/no-img-element
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-48 object-contain rounded-md mb-4"
-                  />
-                )}
-                {isEditable && (
-                  <Input
-                    type="text"
-                    placeholder="Project Image URL"
-                    value={project.image || ""}
-                    onChange={(e) => updateProject(index, "image", e.target.value)}
-                    className="mb-4 text-sm border-2 border-dashed border-blue-300"
-                  />
-                )}
-                {project.title && (
-                  isEditable ? (
-                    <ContentEditable
-                      html={project.title}
-                      onChange={(e) => updateProject(index, "title", e.target.value)}
-                      className="text-2xl font-semibold text-gray-900 mb-2 border-2 border-dashed border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  ) : (
-                    <h2 className="text-2xl font-semibold text-gray-900 mb-2">{project.title}</h2>
-                  )
-                )}
-                {(project.githubLink || project.liveDemoLink || isEditable) && (
-                  <div className="flex flex-col gap-4 mt-4">
-                    {isEditable ? (
-                      <>
-                        <Input
-                          type="text"
-                          placeholder="Github Link"
-                          value={project.githubLink || ""}
-                          onChange={(e) => updateProject(index, "githubLink", e.target.value)}
-                          className="text-sm border-2 border-dashed border-blue-300"
-                        />
-                        <Input
-                          type="text"
-                          placeholder="Live Demo Link"
-                          value={project.liveDemoLink || ""}
-                          onChange={(e) => updateProject(index, "liveDemoLink", e.target.value)}
-                          className="text-sm border-2 border-dashed border-blue-300"
-                        />
-                      </>
-                    ) : (
-                      <div className="flex gap-4 justify-center">
-                        {project.githubLink && (
-                          <a
-                            href={project.githubLink}
-                            className="px-4 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-900 transition-colors"
-                          >
-                            Github
-                          </a>
-                        )}
-                        {project.liveDemoLink && (
-                          <a
-                            href={project.liveDemoLink}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
-                          >
-                            Live Demo
-                          </a>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </motion.div>
+                project={project}
+                index={index}
+                isEditable={isEditable}
+                onUpdate={handleArrayUpdate}
+                onDelete={onDeleteProject}
+              />
             ))}
-            {isEditable && onAddProject && (
+          </div>
+          {isEditable && onAddProject && (
+            <div className="text-center mt-12">
               <button
                 onClick={onAddProject}
-                className="mt-6 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full text-lg h-12 cursor-pointer"
+                className="group flex items-center gap-2 mx-auto px-6 py-3 font-semibold text-white bg-sky-500 rounded-lg hover:bg-sky-600 transition-all cursor-pointer"
               >
-                <FaPlus className="inline mr-2" /> Add Project
+                <FiPlus /> Add Project
               </button>
-            )}
-          </div>
-        </motion.section>
-      )}
-
-      {(data.contact?.email || data.contact?.linkedin || data.contact?.github || data.contact?.phone) && (
-        <motion.section
+            </div>
+          )}
+        </Section>
+        <Section
           id="contact"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="min-h-screen flex flex-col items-center justify-center px-8 py-16 bg-white"
+          title="Contact Me"
+          subtitle="Get In Touch"
+          className="bg-white"
         >
-          <ContentEditable
-            html="Get in Touch"
-            disabled
-            onChange={noop}
-            className="text-lg text-gray-600"
-          />
-          <ContentEditable
-            html="Contact Me"
-            disabled
-            onChange={noop}
-            className="text-4xl font-bold text-gray-900 mb-12"
-          />
-          <div className="max-w-lg w-full bg-gray-50 p-8 rounded-lg shadow-md text-center">
-            <div className="flex flex-col gap-6">
-              {data.contact.email && (
-                <div className="flex items-center gap-4 justify-center">
-                  <FaEnvelope className="w-6 h-6 text-gray-700" />
-                  {isEditable ? (
-                    <ContentEditable
-                      html={data.contact.email}
-                      onChange={(e) => updateContact("email", e.target.value)}
-                      className="text-lg text-gray-800 border-2 border-dashed border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  ) : (
-                    <a href={`mailto:${data.contact.email}`} className="text-lg text-gray-800">
-                      {data.contact.email}
-                    </a>
-                  )}
-                </div>
-              )}
-              {data.contact.linkedin && (
-                <div className="flex items-center gap-4 justify-center">
-                  <FaLinkedin className="w-6 h-6 text-blue-700" />
-                  {isEditable ? (
-                    <ContentEditable
-                      html={data.contact.linkedin}
-                      onChange={(e) => updateContact("linkedin", e.target.value)}
-                      className="text-lg text-gray-800 border-2 border-dashed border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  ) : (
-                    <a href={data.contact.linkedin} className="text-lg text-gray-800">
-                      {data.contact.linkedin}
-                    </a>
-                  )}
-                </div>
-              )}
-              {data.contact.github && (
-                <div className="flex items-center gap-4 justify-center">
-                  <FaGithub className="w-6 h-6 text-gray-800" />
-                  {isEditable ? (
-                    <ContentEditable
-                      html={data.contact.github}
-                      onChange={(e) => updateContact("github", e.target.value)}
-                      className="text-lg text-gray-800 border-2 border-dashed border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  ) : (
-                    <a href={data.contact.github} className="text-lg text-gray-800">
-                      {data.contact.github}
-                    </a>
-                  )}
-                </div>
-              )}
-              {data.contact.phone && (
-                <div className="flex items-center gap-4 justify-center">
-                  <FaPhone className="w-6 h-6 text-gray-700" />
-                  {isEditable ? (
-                    <ContentEditable
-                      html={data.contact.phone}
-                      onChange={(e) => updateContact("phone", e.target.value)}
-                      className="text-lg text-gray-800 border-2 border-dashed border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  ) : (
-                    <a href={`tel:${data.contact.phone}`} className="text-lg text-gray-800">
-                      {data.contact.phone}
-                    </a>
-                  )}
-                </div>
-              )}
+          <div className="max-w-md mx-auto bg-white p-8 rounded-xl border border-slate-200">
+            <div className="space-y-6">
+              <ContactItem
+                icon={<FiMail size={20} />}
+                isEditable={isEditable}
+                value={data.contact?.email}
+                href={`mailto:${data.contact?.email}`}
+                onUpdate={(val) => handleNestedUpdate("contact", "email", val)}
+                placeholder="Email Address"
+              />
+              <ContactItem
+                icon={<FiLinkedin size={20} />}
+                isEditable={isEditable}
+                value={data.contact?.linkedin}
+                href={data.contact?.linkedin}
+                onUpdate={(val) =>
+                  handleNestedUpdate("contact", "linkedin", val)
+                }
+                placeholder="LinkedIn URL"
+              />
+              <ContactItem
+                icon={<FiGithub size={20} />}
+                isEditable={isEditable}
+                value={data.contact?.github}
+                href={data.contact?.github}
+                onUpdate={(val) => handleNestedUpdate("contact", "github", val)}
+                placeholder="GitHub URL"
+              />
             </div>
           </div>
-        </motion.section>
-      )}
-
-      <footer className="py-8 text-center bg-gray-900 text-white">
-        <p className="text-sm">Copyright © {new Date().getFullYear()} {data.name || "Your Name"}. All Rights Reserved.</p>
-      </footer>
+        </Section>
+        <footer className="py-8 text-center bg-white border-t border-slate-200">
+          <p className="text-sm text-slate-500">
+            Copyright © {new Date().getFullYear()} {data.name}. All Rights
+            Reserved.
+          </p>
+        </footer>
+      </div>
     </div>
   );
 }
