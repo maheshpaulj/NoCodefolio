@@ -148,7 +148,7 @@ See `LICENSE.md` for more information.
 
 Made with ❤️ by:
 
-* **Mahesh Paul**
-* **Aryan Sharma**
+* [https://github.com/maheshpaulj](**Mahesh Paul**)
+* [https://github.com/aryansharma1305](**Aryan Sharma**)
 
 🔗 Project: [https://github.com/maheshpaulj/NoCodefolio](https://github.com/maheshpaulj/NoCodefolio)

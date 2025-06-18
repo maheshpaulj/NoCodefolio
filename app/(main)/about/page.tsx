@@ -14,8 +14,8 @@ const creators = [
   },
   {
     name: 'Aryan Sharma',
-    githubUsername: 'aryan-sharma', // Replace with actual username
-    avatarUrl: 'https://github.com/aryan-sharma.png', // Replace with actual username
+    githubUsername: 'aryansharma1305', // Replace with actual username
+    avatarUrl: 'https://github.com/aryansharma1305.png', // Replace with actual username
   },
 ];
 
