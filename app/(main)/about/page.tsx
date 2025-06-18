@@ -9,8 +9,8 @@ import AnimatedDiv from '@/components/AnimatedDiv'; // Assuming you have the ani
 const creators = [
   {
     name: 'Mahesh Paul',
-    githubUsername: 'mahesh-paul',
-    avatarUrl: 'https://github.com/mahesh-paul.png',
+    githubUsername: 'maheshpaulj',
+    avatarUrl: 'https://github.com/maheshpaulj.png',
   },
   {
     name: 'Aryan Sharma',
@@ -112,7 +112,7 @@ export default function AboutPage() {
           </p>
           <motion.div className='w-64' whileHover={{ scale: 1.05 }} transition={{ type: 'spring', stiffness: 300 }}>
             <Link 
-              href="https://github.com/mahesh-paul/NoCodefolio" // Replace with your actual repo link
+              href="https://github.com/maheshpaulj/NoCodefolio" // Replace with your actual repo link
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-3 px-8 py-3 font-semibold text-white bg-slate-700 hover:bg-slate-600 rounded-lg shadow-lg"

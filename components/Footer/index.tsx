@@ -53,7 +53,7 @@ export default function Footer() {
       title: 'Developers', 
       links: [ 
         { name: 'Mail Us', href: 'mailto:mahesh.paul.j@gmail.com', icon: <FiMail /> }, 
-        { name: 'GitHub Repo', href: 'https://github.com/mahesh-paul/NoCodefolio', icon: <FiGithubDev />, target: '_blank' } 
+        { name: 'GitHub Repo', href: 'https://github.com/maheshpaulj/NoCodefolio', icon: <FiGithubDev />, target: '_blank' } 
       ] 
     },
   ];
@@ -77,7 +77,7 @@ export default function Footer() {
             <p className="text-slate-400 max-w-xs">The ultimate no-code portfolio builder for developers and creatives.</p>
             <div className="flex gap-4 mt-6">
               {/* <motion.a whileHover={{ y: -3, scale: 1.1 }} href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-sky-400 transition-colors"><FaTwitter size={20} /></motion.a> */}
-              <motion.a whileHover={{ y: -3, scale: 1.1 }} href="https://github.com/mahesh-paul/NoCodefolio" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-sky-400 transition-colors"><FaGithub size={20} /></motion.a>
+              <motion.a whileHover={{ y: -3, scale: 1.1 }} href="https://github.com/maheshpaulj/NoCodefolio" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-sky-400 transition-colors"><FaGithub size={20} /></motion.a>
               {/* <motion.a whileHover={{ y: -3, scale: 1.1 }} href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-sky-400 transition-colors"><FaLinkedin size={20} /></motion.a> */}
             </div>
           </motion.div>
