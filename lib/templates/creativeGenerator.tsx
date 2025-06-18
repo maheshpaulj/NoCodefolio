@@ -24,7 +24,7 @@ function getFinalData(data: PortfolioData): PortfolioData {
 
 export function creativeTemplate(data: PortfolioData): Record<string, string> {
   const finalData = getFinalData(data);
-  const faviconLink = data.favicon || "/favicon.ico"; // Default favicon
+  const faviconLink = finalData.favicon || "/favicon.ico"; // Default favicon
 
   // Main Page Content (page.tsx)
   const pageContent = `

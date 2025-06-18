@@ -39,7 +39,7 @@ function generateSection(id: string, title: string, subtitle: string, content: s
 
 export function modernTemplate(data: PortfolioData): Record<string, string> {
   const finalData = getFinalData(data);
-  const faviconLink = data.favicon || "/favicon.ico"; // Default favicon
+  const faviconLink = finalData.favicon || "/favicon.ico"; // Default favicon
   // --- Main Page Content (page.tsx) ---
   const pageContent = `
     'use client';

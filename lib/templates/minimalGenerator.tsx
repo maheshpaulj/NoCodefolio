@@ -23,7 +23,7 @@ function getFinalData(data: PortfolioData): PortfolioData {
 
 export function minimalTemplate(data: PortfolioData): Record<string, string> {
   const finalData = getFinalData(data);
-  const faviconLink = data.favicon || "/favicon.ico"; // Default favicon
+  const faviconLink = finalData.favicon || "/favicon.ico"; // Default favicon
 
   const pageContent = `
     'use client';
