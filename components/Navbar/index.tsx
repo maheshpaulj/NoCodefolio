@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { FiMenu, FiX, FiUser, FiLogOut, FiLayout, FiLoader } from 'react-icons/fi';
-import { SiBuildkite } from 'react-icons/si';
 import { usePathname } from 'next/navigation';
 
 // Variants for staggering mobile menu items
