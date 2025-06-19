@@ -67,7 +67,7 @@ Ready to build and launch your portfolio? Here's how:
 ### 🧑‍💻 Using the App
 
 1. **Sign In**
-   Visit the [live app](https://your-live-app-url.com) and sign in with Google.
+   Visit the [live app](https://nocodefolio.vercel.app) and sign in with Google.
 
 2. **Choose a Template**
    Go to the "Generate" page and select a template. <img src="public/assets/guide_01.png" alt="Choose Template" width="700"/>
