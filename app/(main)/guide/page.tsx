@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FiPlayCircle, FiCode, FiMousePointer, FiZap, FiArrowRight } from 'react-icons/fi';
+import { FiCode, FiMousePointer, FiZap, FiArrowRight } from 'react-icons/fi';
 import AnimatedDiv from '@/components/AnimatedDiv'; // We'll use our safe animation wrapper
 
 // Data for the step-by-step guide for easy updating
