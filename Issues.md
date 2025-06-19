@@ -12,7 +12,7 @@ To Do
 [x] Complete Home Page
 [x] Add more Templates
 [x] Design a Icon
-[] Add icon to the pages(the portfolio)
+[x] Add icon to the pages(the portfolio)
 [x] Record Demo
 [x] in Generated portfolio package, make sure "BuildPortfolio" is used
 [] Analytics

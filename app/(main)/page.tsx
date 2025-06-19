@@ -60,8 +60,14 @@ const LandingPage: NextPage = () => {
                 <div className="w-3 h-3 rounded-full bg-slate-700"></div>
                 <div className="w-3 h-3 rounded-full bg-slate-700"></div>
               </div>
-              <div className="bg-slate-900/80">
-                <img src="/assets/modernTemplate.png" alt="Portfolio Builder UI" className="w-full h-full object-cover object-top" /> {/* eslint-disable-line @next/next/no-img-element*/ }
+              <div className="aspect-video relative bg-muted">
+                <video 
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  loop
+                  muted
+                  src="/assets/demo.mp4"
+                />
               </div>
             </div>
           </motion.div>

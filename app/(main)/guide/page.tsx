@@ -65,9 +65,15 @@ export default function GuidePage() {
           
           {/* Video Placeholder */}
           <div className="relative aspect-video max-w-3xl mx-auto bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl shadow-sky-900/20 flex items-center justify-center overflow-hidden">
-             <div className="absolute inset-0 bg-slate-900/30"></div>
-             <FiPlayCircle className="text-white/50 text-8xl z-10" />
-             <p className="absolute bottom-4 right-4 text-xs text-white/40">Video Guide Coming Soon</p>
+             <div className="aspect-video relative bg-muted">
+                <video 
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  loop
+                  muted
+                  src="/assets/demo.mp4"
+                />
+              </div>
           </div>
         </AnimatedDiv>
 
