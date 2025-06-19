@@ -8,6 +8,11 @@ type EditorPageProps = {
   params: Promise<{ portfolioId: string }>
 };
 
+export const metadata = {
+  title: "NoCodefolio - Portfolio Editor",
+  description: "Edit your portfolio with our intuitive editor.",
+};
+
 export default async function EditorPage({ params }: EditorPageProps) {
   const session = await getServerSession();
   if (!session || !session.user?.email) {
