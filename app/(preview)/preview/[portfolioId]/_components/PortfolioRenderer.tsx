@@ -8,6 +8,8 @@ import { TemplateProps } from '@/types/template';
 import { ModernTemplate } from '@/lib/templates/modern';
 import { CreativeTemplate } from "@/lib/templates/creative";
 import { MinimalTemplate } from '@/lib/templates/minimal';
+import { GalaxyTemplate } from '@/lib/templates/galaxy';
+import { NeonTemplate } from '@/lib/templates/neon';
 
 // This component receives the portfolio data as a prop (which is serializable)
 export default function PortfolioRenderer({ portfolio }: { portfolio: SerializablePortfolio }) {
@@ -16,6 +18,8 @@ export default function PortfolioRenderer({ portfolio }: { portfolio: Serializab
     modern: ModernTemplate,
     creative: CreativeTemplate,
     minimal: MinimalTemplate,
+    galaxy: GalaxyTemplate,
+    neon: NeonTemplate,
   };
 
   const SelectedTemplate = templateComponents[portfolio.template];

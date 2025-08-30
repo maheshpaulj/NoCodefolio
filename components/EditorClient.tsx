@@ -22,6 +22,8 @@ import { MdOpenInNew } from "react-icons/md";
 import { modernTemplate } from "@/lib/templates/modernGenerator";
 import { minimalTemplate } from '@/lib/templates/minimalGenerator';
 import { creativeTemplate } from '@/lib/templates/creativeGenerator';
+import { galaxyTemplate } from '@/lib/templates/galaxyGenerator';
+import { neonTemplate } from '@/lib/templates/neonGenerator';
 
 
 type EditorClientProps = {
@@ -84,6 +86,12 @@ export default function EditorClient({ initialData }: EditorClientProps) {
         break;
       case "creative":
         files = creativeTemplate(data);
+        break;
+      case "galaxy":
+        files = galaxyTemplate(data);
+        break;
+      case "neon":
+        files = neonTemplate(data);
         break;
     }
     

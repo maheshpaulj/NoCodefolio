@@ -1,19 +1,21 @@
 import JSZip from "jszip";
 import { PortfolioData } from "@/types/portfolio";
 import { modernTemplate } from "./templates/modernGenerator";
-// import { minimalTemplate } from "./templates/minimal";
-// import { creativeTemplate } from "./templates/creative";
+import { minimalTemplate } from "./templates/minimalGenerator";
+import { creativeTemplate } from "./templates/creativeGenerator";
+import { galaxyTemplate } from "./templates/galaxyGenerator";
+import { neonTemplate } from "./templates/neonGenerator";
 
 export async function generatePortfolio(data: PortfolioData) {
   const zip = new JSZip();
 
   const templates = {
     modern: modernTemplate,
-    minimal: modernTemplate,
-    creative: modernTemplate,
-    // minimal: minimalTemplate,
-    // creative: creativeTemplate,
-  };
+    minimal: minimalTemplate,
+    creative: creativeTemplate,
+    galaxy: galaxyTemplate,
+    neon: neonTemplate,
+  } as const;
 
   const selectedTemplate = templates[data.template] || modernTemplate;
   const projectFiles = selectedTemplate(data);

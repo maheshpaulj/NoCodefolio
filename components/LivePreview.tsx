@@ -5,6 +5,8 @@ import { ModernTemplate } from "@/lib/templates/modern"; // Or wherever your tem
 import { SerializablePortfolio } from "@/types/portfolio";
 import { CreativeTemplate } from '@/lib/templates/creative';
 import { MinimalTemplate } from '@/lib/templates/minimal';
+import { GalaxyTemplate } from '@/lib/templates/galaxy';
+import { NeonTemplate } from '@/lib/templates/neon';
 
 /**
  * The props for the LivePreview component.
@@ -43,6 +45,8 @@ export default function LivePreview({
     modern: ModernTemplate,
     creative: CreativeTemplate,
     minimal: MinimalTemplate,
+    galaxy: GalaxyTemplate,
+    neon: NeonTemplate,
   };
 
   const SelectedTemplate = templateComponents[portfolioData.template] || ModernTemplate;

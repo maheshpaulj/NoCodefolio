@@ -7,6 +7,8 @@ import { generateVercelProjectName } from "@/lib/utils";
 import { modernTemplate } from "@/lib/templates/modernGenerator";
 import { minimalTemplate } from "@/lib/templates/minimalGenerator";
 import { creativeTemplate } from "@/lib/templates/creativeGenerator";
+import { galaxyTemplate } from "@/lib/templates/galaxyGenerator";
+import { neonTemplate } from "@/lib/templates/neonGenerator";
 
 // --- POST Handler (Create & Update Deployments) ---
 export async function POST(req: NextRequest) {
@@ -19,6 +21,8 @@ export async function POST(req: NextRequest) {
       modern: modernTemplate,
       minimal: minimalTemplate,
       creative: creativeTemplate,
+      galaxy: galaxyTemplate,
+      neon: neonTemplate,
     };
 
     // 3. Select the correct generator based on the portfolio data, with a safe fallback

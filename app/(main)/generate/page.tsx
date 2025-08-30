@@ -26,6 +26,18 @@ const availableTemplates = [
     description: "A bold and vibrant design for creatives who want to stand out.",
     previewImage: "/assets/creativeTemplate.png",
   },
+  {
+    id: "galaxy",
+    name: "Galaxy",
+    description: "Cosmic gradient vibes with bold type and motion.",
+    previewImage: "/assets/thumbnail.png",
+  },
+  {
+    id: "neon",
+    name: "Neon",
+    description: "High-contrast neon style with cyber glow touches.",
+    previewImage: "/assets/thumbnail.png",
+  },
 ];
 
 // NOTE: You would need to pass a function to LivePreview to allow the user
@@ -37,7 +49,7 @@ export default function GeneratePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  const handleTemplateSelect = async (templateId: "modern" | "minimal" | "creative") => {
+  const handleTemplateSelect = async (templateId: "modern" | "minimal" | "creative" | "galaxy" | "neon") => {
     if (status === 'authenticated' && session.user?.email) {
       try {
         // This server action will handle creation and redirection
@@ -81,7 +93,7 @@ export default function GeneratePage() {
                 }}
                 transition={{ type: 'spring', stiffness: 300 }}
                 className="group bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden cursor-pointer flex flex-col"
-                onClick={() => handleTemplateSelect(template.id as "modern" | "minimal" | "creative")}
+                onClick={() => handleTemplateSelect(template.id as "modern" | "minimal" | "creative" | "galaxy" | "neon")}
               >
                 {/* Mock Browser Chrome */}
                 <div className="p-2 border-b border-slate-700 flex items-center gap-1.5 bg-slate-900/50">
