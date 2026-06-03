@@ -97,7 +97,9 @@ const defaultData: Omit<PortfolioData, 'template'> = {
     linkedin: "https://linkedin.com/in/alex-doe",
     github: "https://github.com/alex-doe",
     phone: "+1 (555) 123-4567" // Optional field, good to have a placeholder
-  }
+  },
+
+  favicon: "https://nocodefolio.vercel.app/favicon.ico"
 };
 
   let docId = null;

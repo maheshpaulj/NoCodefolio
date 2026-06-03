@@ -53,7 +53,7 @@ export function NeonTemplate({
   onDeleteSkill,
   onDeleteProject,
 }: NeonTemplateProps) {
-  const update = (field: keyof PortfolioData, value: any) => {
+  const update = (field: keyof PortfolioData, value: unknown) => {
     if (isEditable && onUpdate) onUpdate({ ...data, [field]: value });
   };
   const updateNested = <T extends object>(
@@ -247,5 +247,4 @@ export function NeonTemplate({
     </div>
   );
 }
-
 

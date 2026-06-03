@@ -16,7 +16,7 @@ function getFinalData(data: PortfolioData): PortfolioData {
       github: data.contact?.github || "",
       phone: data.contact?.phone || "",
     },
-    template: "galaxy" as any,
+    template: "galaxy",
     vercelProjectId: data.vercelProjectId,
     vercelDomain: data.vercelDomain,
     favicon: data.favicon || "https://nocodefolio.vercel.app/favicon.ico",
@@ -25,6 +25,7 @@ function getFinalData(data: PortfolioData): PortfolioData {
 
 export function galaxyTemplate(data: PortfolioData): Record<string, string> {
   const d = getFinalData(data);
+  const safeBio = JSON.stringify(d.bio);
 
   const page = `
 'use client';
@@ -39,7 +40,7 @@ export default function Home() {
             <Image src="${d.profileImage}" alt="Avatar" width={128} height={128} className="w-full h-full object-cover" />
           </div>
           <h1 className="text-6xl md:text-7xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-400 via-cyan-300 to-emerald-300">${d.name}</h1>
-          <p className="mt-3 text-slate-300" dangerouslySetInnerHTML={{ __html: `${d.bio.replace(/` + "`" + `/g, '\\`')}` }} />
+          <p className="mt-3 text-slate-300" dangerouslySetInnerHTML={{ __html: ${safeBio} }} />
         </div>
       </section>
     </main>

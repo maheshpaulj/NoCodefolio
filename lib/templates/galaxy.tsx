@@ -57,7 +57,7 @@ export function GalaxyTemplate({
   onDeleteSkill,
   onDeleteProject,
 }: GalaxyTemplateProps) {
-  const handleUpdate = (field: keyof PortfolioData, value: any) => {
+  const handleUpdate = (field: keyof PortfolioData, value: unknown) => {
     if (isEditable && onUpdate) onUpdate({ ...data, [field]: value });
   };
   const handleNestedUpdate = <T extends object>(
@@ -282,5 +282,4 @@ export function GalaxyTemplate({
     </div>
   );
 }
-
 

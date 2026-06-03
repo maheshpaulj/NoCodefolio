@@ -9,6 +9,8 @@ import { minimalTemplate } from "@/lib/templates/minimalGenerator";
 import { creativeTemplate } from "@/lib/templates/creativeGenerator";
 import { galaxyTemplate } from "@/lib/templates/galaxyGenerator";
 import { neonTemplate } from "@/lib/templates/neonGenerator";
+import { auroraTemplate } from "@/lib/templates/auroraGenerator";
+import { executiveTemplate } from "@/lib/templates/executiveGenerator";
 
 // --- POST Handler (Create & Update Deployments) ---
 export async function POST(req: NextRequest) {
@@ -23,6 +25,8 @@ export async function POST(req: NextRequest) {
       creative: creativeTemplate,
       galaxy: galaxyTemplate,
       neon: neonTemplate,
+      aurora: auroraTemplate,
+      executive: executiveTemplate,
     };
 
     // 3. Select the correct generator based on the portfolio data, with a safe fallback

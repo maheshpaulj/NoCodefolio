@@ -10,6 +10,8 @@ import { CreativeTemplate } from "@/lib/templates/creative";
 import { MinimalTemplate } from '@/lib/templates/minimal';
 import { GalaxyTemplate } from '@/lib/templates/galaxy';
 import { NeonTemplate } from '@/lib/templates/neon';
+import { AuroraTemplate } from '@/lib/templates/aurora';
+import { ExecutiveTemplate } from '@/lib/templates/executive';
 
 // This component receives the portfolio data as a prop (which is serializable)
 export default function PortfolioRenderer({ portfolio }: { portfolio: SerializablePortfolio }) {
@@ -20,6 +22,8 @@ export default function PortfolioRenderer({ portfolio }: { portfolio: Serializab
     minimal: MinimalTemplate,
     galaxy: GalaxyTemplate,
     neon: NeonTemplate,
+    aurora: AuroraTemplate,
+    executive: ExecutiveTemplate,
   };
 
   const SelectedTemplate = templateComponents[portfolio.template];

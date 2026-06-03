@@ -5,6 +5,8 @@ import { minimalTemplate } from "./templates/minimalGenerator";
 import { creativeTemplate } from "./templates/creativeGenerator";
 import { galaxyTemplate } from "./templates/galaxyGenerator";
 import { neonTemplate } from "./templates/neonGenerator";
+import { auroraTemplate } from "./templates/auroraGenerator";
+import { executiveTemplate } from "./templates/executiveGenerator";
 
 export async function generatePortfolio(data: PortfolioData) {
   const zip = new JSZip();
@@ -15,6 +17,8 @@ export async function generatePortfolio(data: PortfolioData) {
     creative: creativeTemplate,
     galaxy: galaxyTemplate,
     neon: neonTemplate,
+    aurora: auroraTemplate,
+    executive: executiveTemplate,
   } as const;
 
   const selectedTemplate = templates[data.template] || modernTemplate;

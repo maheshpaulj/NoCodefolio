@@ -2,7 +2,7 @@ import { Timestamp } from 'firebase/firestore';
 
 // More specific union types for better type safety and autocompletion
 export type SkillLevel = 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
-export type TemplateId = 'modern' | 'minimal' | 'creative' | 'galaxy' | 'neon';
+export type TemplateId = 'modern' | 'minimal' | 'creative' | 'galaxy' | 'neon' | 'aurora' | 'executive';
 
 // --- Sub-Interfaces (Largely the same, with minor improvements) ---
 

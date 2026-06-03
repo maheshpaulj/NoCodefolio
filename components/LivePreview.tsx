@@ -7,6 +7,8 @@ import { CreativeTemplate } from '@/lib/templates/creative';
 import { MinimalTemplate } from '@/lib/templates/minimal';
 import { GalaxyTemplate } from '@/lib/templates/galaxy';
 import { NeonTemplate } from '@/lib/templates/neon';
+import { AuroraTemplate } from '@/lib/templates/aurora';
+import { ExecutiveTemplate } from '@/lib/templates/executive';
 
 /**
  * The props for the LivePreview component.
@@ -47,6 +49,8 @@ export default function LivePreview({
     minimal: MinimalTemplate,
     galaxy: GalaxyTemplate,
     neon: NeonTemplate,
+    aurora: AuroraTemplate,
+    executive: ExecutiveTemplate,
   };
 
   const SelectedTemplate = templateComponents[portfolioData.template] || ModernTemplate;

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { SerializablePortfolio } from '@/types/portfolio';
+import { SerializablePortfolio, TemplateId } from '@/types/portfolio';
 import LivePreview from './LivePreview';
 import ConfirmationModal from './ConfirmationModal';
 import { saveVercelData, updatePortfolio } from '@/lib/actions';
@@ -24,11 +24,23 @@ import { minimalTemplate } from '@/lib/templates/minimalGenerator';
 import { creativeTemplate } from '@/lib/templates/creativeGenerator';
 import { galaxyTemplate } from '@/lib/templates/galaxyGenerator';
 import { neonTemplate } from '@/lib/templates/neonGenerator';
+import { auroraTemplate } from '@/lib/templates/auroraGenerator';
+import { executiveTemplate } from '@/lib/templates/executiveGenerator';
 
 
 type EditorClientProps = {
   initialData: SerializablePortfolio;
 };
+
+const templateOptions: { id: TemplateId; name: string }[] = [
+  { id: "modern", name: "Modern" },
+  { id: "minimal", name: "Minimal" },
+  { id: "creative", name: "Creative" },
+  { id: "galaxy", name: "Galaxy" },
+  { id: "neon", name: "Neon" },
+  { id: "aurora", name: "Aurora" },
+  { id: "executive", name: "Executive" },
+];
 
 export default function EditorClient({ initialData }: EditorClientProps) {
   const [data, setData] = useState<SerializablePortfolio>(initialData);
@@ -92,6 +104,12 @@ export default function EditorClient({ initialData }: EditorClientProps) {
         break;
       case "neon":
         files = neonTemplate(data);
+        break;
+      case "aurora":
+        files = auroraTemplate(data);
+        break;
+      case "executive":
+        files = executiveTemplate(data);
         break;
     }
     
@@ -255,6 +273,37 @@ export default function EditorClient({ initialData }: EditorClientProps) {
           </div>
         </div>
       </header>
+
+      <section className="mt-4 w-[90%] max-w-7xl rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-white backdrop-blur-lg">
+        <div className="grid gap-3 md:grid-cols-[240px_1fr] md:items-center">
+          <label className="flex flex-col gap-1 text-sm">
+            <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">Template</span>
+            <select
+              value={data.template}
+              onChange={(event) =>
+                setData((prev) => ({ ...prev, template: event.target.value as TemplateId }))
+              }
+              className="h-10 rounded-lg border border-slate-700 bg-slate-800 px-3 text-sm text-white outline-none focus:border-sky-400"
+            >
+              {templateOptions.map((template) => (
+                <option key={template.id} value={template.id}>
+                  {template.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="flex flex-col gap-1 text-sm">
+            <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">Favicon URL</span>
+            <input
+              value={data.favicon || ""}
+              onChange={(event) => setData((prev) => ({ ...prev, favicon: event.target.value }))}
+              placeholder="https://example.com/favicon.ico"
+              className="h-10 rounded-lg border border-slate-700 bg-slate-800 px-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-sky-400"
+            />
+          </label>
+        </div>
+      </section>
 
       {/* Main Preview Area */}
       <main className="flex-grow w-full flex items-center justify-center overflow-hidden p-4 sm:p-6 md:p-8">

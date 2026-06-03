@@ -5,6 +5,7 @@ import { FiArrowRight, FiLogIn } from "react-icons/fi";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { createPortfolio } from "@/lib/actions";
+import { TemplateId } from "@/types/portfolio";
 
 // Same available templates data
 const availableTemplates = [
@@ -38,6 +39,18 @@ const availableTemplates = [
     description: "High-contrast neon style with cyber glow touches.",
     previewImage: "/assets/thumbnail.png",
   },
+  {
+    id: "aurora",
+    name: "Aurora",
+    description: "A cinematic gradient portfolio with strong visual presence.",
+    previewImage: "/assets/thumbnail.png",
+  },
+  {
+    id: "executive",
+    name: "Executive",
+    description: "A crisp, editorial portfolio for senior and leadership profiles.",
+    previewImage: "/assets/minimalTemplate.png",
+  },
 ];
 
 // NOTE: You would need to pass a function to LivePreview to allow the user
@@ -49,7 +62,7 @@ export default function GeneratePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  const handleTemplateSelect = async (templateId: "modern" | "minimal" | "creative" | "galaxy" | "neon") => {
+  const handleTemplateSelect = async (templateId: TemplateId) => {
     if (status === 'authenticated' && session.user?.email) {
       try {
         // This server action will handle creation and redirection
@@ -93,7 +106,7 @@ export default function GeneratePage() {
                 }}
                 transition={{ type: 'spring', stiffness: 300 }}
                 className="group bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden cursor-pointer flex flex-col"
-                onClick={() => handleTemplateSelect(template.id as "modern" | "minimal" | "creative" | "galaxy" | "neon")}
+                onClick={() => handleTemplateSelect(template.id as TemplateId)}
               >
                 {/* Mock Browser Chrome */}
                 <div className="p-2 border-b border-slate-700 flex items-center gap-1.5 bg-slate-900/50">

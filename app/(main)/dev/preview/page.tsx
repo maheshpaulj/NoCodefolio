@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import LivePreview from "@/components/LivePreview";
 import { SerializablePortfolio, TemplateId } from "@/types/portfolio";
 import { motion } from "framer-motion";
@@ -48,9 +48,9 @@ const starterData: Omit<SerializablePortfolio, "id" | "userId" | "createdAt" | "
   favicon: "https://nocodefolio.vercel.app/favicon.ico",
 };
 
-const allTemplates: TemplateId[] = ["galaxy", "neon"];
+const allTemplates: TemplateId[] = ["modern", "minimal", "creative", "galaxy", "neon", "aurora", "executive"];
 
-export default function DevPreviewPage() {
+function DevPreviewContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [template, setTemplate] = useState<TemplateId>("galaxy");
@@ -64,6 +64,12 @@ export default function DevPreviewPage() {
 
   const selectable = useMemo(() => allTemplates, []);
 
+  const selectTemplate = (nextTemplate: TemplateId) => {
+    setTemplate(nextTemplate);
+    setData((prev) => ({ ...prev, template: nextTemplate }));
+    router.replace(`/dev/preview?t=${nextTemplate}`);
+  };
+
   // Initialize from URL (?t=galaxy|neon)
   useEffect(() => {
     const t = (searchParams.get("t") || "galaxy") as TemplateId;
@@ -72,16 +78,6 @@ export default function DevPreviewPage() {
     setData((prev) => ({ ...prev, template: next }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
-
-  // Keep URL in sync when template changes (no full reload)
-  useEffect(() => {
-    const url = new URL(window.location.href);
-    if (url.searchParams.get("t") !== template) {
-      url.searchParams.set("t", template);
-      router.replace(url.pathname + "?" + url.searchParams.toString());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [template]);
 
   return (
     <div className="min-h-screen bg-slate-900 text-white flex flex-col gap-6 p-6">
@@ -98,10 +94,7 @@ export default function DevPreviewPage() {
               key={t}
               whileHover={{ y: -2, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => {
-                setTemplate(t);
-                setData((prev) => ({ ...prev, template: t }));
-              }}
+              onClick={() => selectTemplate(t)}
               className={`px-3 py-1.5 rounded-full border text-sm cursor-pointer ${
                 template === t
                   ? "bg-sky-500 border-sky-400 text-white"
@@ -132,8 +125,7 @@ export default function DevPreviewPage() {
             value={template}
             onChange={(e) => {
               const t = e.target.value as TemplateId;
-              setTemplate(t);
-              setData((prev) => ({ ...prev, template: t }));
+              selectTemplate(t);
             }}
             className="ml-2 px-2 py-1 rounded-md bg-slate-800 border border-slate-700 text-sm"
             aria-label="Select template"
@@ -216,6 +208,14 @@ export default function DevPreviewPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function DevPreviewPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-900 text-white p-6">Loading preview...</div>}>
+      <DevPreviewContent />
+    </Suspense>
   );
 }
 
